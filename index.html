@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StudX — The Student Marketplace</title>
+<meta name="description" content="Buy, sell and discover products and opportunities within your student community. StudX is built for students, by students." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   RESET + BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue:        #2563EB;
+  --blue-dark:   #1D4ED8;
+  --blue-deeper: #1E3A8A;
+  --blue-tint:   #DBEAFE;
+  --blue-glow:   rgba(37,99,235,0.18);
+  --white:       #FFFFFF;
+  --off-white:   #F8FAFC;
+  --surface:     #F1F5F9;
+  --border:      #E2E8F0;
+  --text:        #0F172A;
+  --text-2:      #334155;
+  --text-3:      #64748B;
+  --radius-sm:   8px;
+  --radius-md:   16px;
+  --radius-lg:   24px;
+  --radius-xl:   32px;
+  --radius-full: 9999px;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.04);
+  --shadow-lg:   0 20px 60px rgba(0,0,0,.10), 0 8px 20px rgba(0,0,0,.06);
+  --shadow-blue: 0 20px 60px rgba(37,99,235,.22), 0 8px 20px rgba(37,99,235,.12);
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--white);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a   { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: var(--blue-tint);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.section-subtitle {
+  font-size: clamp(16px, 2vw, 18px);
+  color: var(--text-3);
+  line-height: 1.65;
+  max-width: 540px;
+}
+
+/* Fade-in animation */
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .65s cubic-bezier(.16,1,.3,1),
+              transform .65s cubic-bezier(.16,1,.3,1);
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-up.delay-1 { transition-delay: .1s; }
+.fade-up.delay-2 { transition-delay: .2s; }
+.fade-up.delay-3 { transition-delay: .3s; }
+.fade-up.delay-4 { transition-delay: .4s; }
+.fade-up.delay-5 { transition-delay: .5s; }
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(226,232,240,.7);
+  transition: box-shadow .3s;
+}
+nav.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,.07); }
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo {
+  width: 36px; height: 36px;
+  background: var(--blue);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff;
+  letter-spacing: -.02em;
+  box-shadow: 0 4px 12px rgba(37,99,235,.3);
+}
+.nav-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.03em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+}
+.nav-links a {
+  display: block;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  border-radius: var(--radius-sm);
+  transition: color .2s, background .2s;
+}
+.nav-links a:hover { color: var(--blue); background: var(--blue-tint); }
+
+.nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 14px rgba(37,99,235,.3);
+  transition: background .2s, transform .2s, box-shadow .2s;
+}
+.btn-primary:hover {
+  background: var(--blue-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37,99,235,.38);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--white);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border);
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.btn-secondary:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: background .2s;
+}
+.nav-hamburger:hover { background: var(--surface); }
+.nav-hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text); border-radius: 2px;
+  transition: all .25s;
+}
+
+/* Mobile nav */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 64px; left: 0; right: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px 24px;
+  box-shadow: var(--shadow-md);
+  z-index: 99;
+  flex-direction: column;
+  gap: 4px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-2);
+  border-radius: var(--radius-md);
+}
+.mobile-menu a:hover { background: var(--surface); color: var(--blue); }
+.mobile-menu .btn-primary { margin-top: 8px; justify-content: center; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(165deg, #EFF6FF 0%, #FFFFFF 50%, #F8FAFC 100%);
+  overflow: hidden;
+  padding-top: 64px;
+}
+
+/* Background orbs */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(37,99,235,.12) 0%, transparent 70%);
+  top: -200px; right: -200px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(37,99,235,.08) 0%, transparent 70%);
+  bottom: -100px; left: 100px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 64px;
+  width: 100%;
+}
+
+.hero-content { position: relative; z-index: 2; }
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  background: var(--blue-tint);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  margin-bottom: 24px;
+  border: 1px solid rgba(37,99,235,.15);
+}
+.hero-eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .6; transform: scale(1.4); }
+}
+
+.hero-title {
+  font-size: clamp(38px, 5.5vw, 68px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.035em;
+  line-height: 1.08;
+  margin-bottom: 24px;
+}
+.hero-title span {
+  color: var(--blue);
+  position: relative;
+}
+.hero-title span::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -4px; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), #60A5FA);
+  border-radius: 2px;
+  opacity: .5;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: var(--text-3);
+  line-height: 1.7;
+  max-width: 460px;
+  margin-bottom: 40px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 28px;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 28px rgba(37,99,235,.35);
+  transition: all .25s cubic-bezier(.16,1,.3,1);
+}
+.hero-btn-primary:hover {
+  background: var(--blue-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(37,99,235,.45);
+}
+
+.hero-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 28px;
+  color: var(--text-2);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,.8);
+  transition: all .25s;
+}
+.hero-btn-secondary:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+  background: var(--blue-tint);
+  transform: translateY(-1px);
+}
+
+.hero-social-proof {
+  margin-top: 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.hero-avatars {
+  display: flex;
+}
+.hero-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--white);
+  margin-left: -8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--white);
+  flex-shrink: 0;
+}
+.hero-avatar:first-child { margin-left: 0; }
+.hero-avatars .hero-avatar:nth-child(1) { background: #2563EB; }
+.hero-avatars .hero-avatar:nth-child(2) { background: #7C3AED; }
+.hero-avatars .hero-avatar:nth-child(3) { background: #DB2777; }
+.hero-avatars .hero-avatar:nth-child(4) { background: #D97706; }
+
+.hero-proof-text {
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.4;
+}
+.hero-proof-text strong { color: var(--text); font-weight: 600; }
+
+/* ---- Phone mockup ---- */
+.hero-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.phone-glow {
+  position: absolute;
+  width: 340px; height: 500px;
+  background: radial-gradient(ellipse, rgba(37,99,235,.22) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: .7; transform: scale(1); }
+  50%       { opacity: 1;  transform: scale(1.1); }
+}
+
+.phone-frame {
+  position: relative;
+  width: 280px;
+  height: 580px;
+  background: #0F172A;
+  border-radius: 44px;
+  box-shadow: 0 40px 100px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.08) inset, 0 4px 0 rgba(255,255,255,.06) inset;
+  overflow: hidden;
+  animation: phone-float 6s ease-in-out infinite;
+}
+@keyframes phone-float {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50%       { transform: translateY(-14px) rotate(1deg); }
+}
+
+.phone-notch {
+  position: absolute;
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  width: 90px; height: 26px;
+  background: #0F172A;
+  border-radius: 20px;
+  z-index: 10;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06);
+}
+
+.phone-screen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #0f0f11 0%, #18181b 100%);
+  border-radius: 44px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px 0;
+  margin-top: 4px;
+}
+.phone-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,.9);
+}
+.phone-icons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.phone-icons span {
+  font-size: 10px;
+  color: rgba(255,255,255,.9);
+}
+
+.phone-content {
+  flex: 1;
+  padding: 16px 16px 0;
+  overflow: hidden;
+}
+
+.phone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-top: 4px;
+}
+.phone-logo-small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.phone-logo-mark {
+  width: 28px; height: 28px;
+  background: #2563EB;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #fff;
+}
+.phone-brand { font-size: 14px; font-weight: 700; color: #f0ede8; }
+.phone-bell {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,.08);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+
+.phone-search {
+  background: rgba(255,255,255,.07);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phone-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.phone-pills::-webkit-scrollbar { display: none; }
+.phone-pill {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.6);
+}
+.phone-pill.active {
+  background: #2563EB;
+  color: #fff;
+}
+
+.phone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.phone-card {
+  background: #1f1f23;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.06);
+}
+.phone-card-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+.phone-card-img.bg-blue  { background: linear-gradient(135deg, #1D4ED8, #3B82F6); }
+.phone-card-img.bg-purp  { background: linear-gradient(135deg, #5B21B6, #8B5CF6); }
+.phone-card-img.bg-rose  { background: linear-gradient(135deg, #9F1239, #F43F5E); }
+.phone-card-img.bg-amber { background: linear-gradient(135deg, #92400E, #F59E0B); }
+
+.phone-card-body { padding: 8px 10px; }
+.phone-card-title { font-size: 11px; font-weight: 600; color: #f0ede8; margin-bottom: 2px; line-height: 1.3; }
+.phone-card-price { font-size: 12px; font-weight: 700; color: #4F8EF7; }
+
+.phone-bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0 20px;
+  background: rgba(15,15,17,.95);
+  border-top: 1px solid rgba(255,255,255,.06);
+  margin-top: auto;
+}
+.phone-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 18px;
+  opacity: .4;
+}
+.phone-nav-item.active { opacity: 1; }
+.phone-nav-item span { font-size: 9px; color: #4F8EF7; font-weight: 600; }
+
+/* Floating cards around phone */
+.float-card {
+  position: absolute;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  animation: float-card 5s ease-in-out infinite;
+}
+.float-card-icon { font-size: 20px; }
+.float-card-text { font-size: 12px; }
+.float-card-text strong { display: block; font-weight: 700; color: var(--text); font-size: 13px; }
+.float-card-text span   { color: var(--text-3); }
+
+.float-card-a {
+  top: 60px; left: -80px;
+  animation-delay: 0s;
+}
+.float-card-b {
+  bottom: 120px; right: -70px;
+  animation-delay: -2.5s;
+}
+.float-card-c {
+  bottom: 30px; left: -60px;
+  animation-delay: -1.3s;
+  font-size: 11px;
+}
+@keyframes float-card {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* ============================================================
+   STATS STRIP
+   ============================================================ */
+.stats-strip {
+  background: var(--blue);
+  padding: 48px 0;
+}
+.stats-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  text-align: center;
+}
+.stat-item {}
+.stat-number {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -.04em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-label {
+  font-size: 14px;
+  color: rgba(255,255,255,.7);
+  font-weight: 500;
+}
+
+/* ============================================================
+   FEATURES
+   ============================================================ */
+.features {
+  padding: 120px 0;
+  background: var(--white);
+}
+.features-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 80px;
+}
+.features-header .section-subtitle { margin: 0 auto; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.feature-card {
+  background: var(--off-white);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px;
+  border: 1px solid var(--border);
+  transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s, border-color .3s;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--blue-tint), transparent);
+  opacity: 0;
+  transition: opacity .3s;
+  border-radius: inherit;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(37,99,235,.2);
+}
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon {
+  width: 56px; height: 56px;
+  background: var(--blue);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(37,99,235,.25);
+  position: relative;
+}
+
+.feature-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.02em;
+  margin-bottom: 10px;
+}
+.feature-desc {
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.65;
+}
+
+/* ============================================================
+   WHY STUDX
+   ============================================================ */
+.why {
+  padding: 120px 0;
+  background: var(--off-white);
+  overflow: hidden;
+}
+.why-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.why-visual {
+  position: relative;
+}
+.why-card-stack {
+  position: relative;
+  height: 440px;
+}
+.why-card {
+  position: absolute;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: 28px;
+  border: 1px solid var(--border);
+}
+.why-card-main {
+  width: 280px;
+  top: 40px; left: 40px;
+  z-index: 3;
+  animation: why-float-1 5s ease-in-out infinite;
+}
+.why-card-back-1 {
+  width: 260px;
+  top: 20px; left: 60px;
+  z-index: 2;
+  background: #EFF6FF;
+  border-color: var(--blue-tint);
+  animation: why-float-2 5s ease-in-out infinite;
+}
+.why-card-back-2 {
+  width: 240px;
+  top: 0; left: 80px;
+  z-index: 1;
+  background: var(--blue-tint);
+  animation: why-float-3 5s ease-in-out infinite;
+}
+@keyframes why-float-1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes why-float-2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes why-float-3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+.why-card-emoji { font-size: 32px; margin-bottom: 12px; }
+.why-card-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.why-card-desc  { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+.why-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 14px;
+  padding: 5px 12px;
+  background: var(--blue-tint);
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.why-big-card {
+  position: absolute;
+  bottom: 0; right: -20px;
+  width: 240px;
+  background: var(--blue);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  color: var(--white);
+  box-shadow: var(--shadow-blue);
+  animation: why-float-1 5s ease-in-out infinite;
+  animation-delay: -2.5s;
+}
+.why-big-number {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.why-big-label { font-size: 13px; opacity: .8; }
+
+.why-content {}
+.why-points {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 40px;
+}
+.why-point {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.why-point-icon {
+  width: 44px; height: 44px;
+  background: var(--blue-tint);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.why-point-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.why-point-desc {
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   HOW IT WORKS
+   ============================================================ */
+.how {
+  padding: 120px 0;
+  background: var(--white);
+}
+.how-header {
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto 80px;
+}
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+.how-steps::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: calc(12.5%);
+  right: calc(12.5%);
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue-tint), var(--blue), var(--blue-tint));
+  z-index: 0;
+}
+.how-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+}
+.how-step-num {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 0 8px var(--white), 0 8px 24px rgba(37,99,235,.15);
+  transition: transform .3s, box-shadow .3s;
+}
+.how-step:hover .how-step-num {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 8px var(--white), 0 12px 32px rgba(37,99,235,.25);
+}
+.how-step-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+.how-step-desc {
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   SCREENSHOTS
+   ============================================================ */
+.screenshots {
+  padding: 120px 0;
+  background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+  overflow: hidden;
+}
+.screenshots-header {
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto 64px;
+}
+.screenshots-header .section-title { color: var(--white); }
+.screenshots-header .section-subtitle { color: rgba(255,255,255,.6); margin: 0 auto; }
+
+.screenshots-track {
+  display: flex;
+  gap: 24px;
+  padding: 20px 40px 40px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.screenshots-track::-webkit-scrollbar { display: none; }
+.screenshots-track:active { cursor: grabbing; }
+
+.screenshot-item {
+  flex-shrink: 0;
+  width: 240px;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.screenshot-phone {
+  width: 220px; height: 440px;
+  background: #18181B;
+  border-radius: 36px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06) inset;
+  overflow: hidden;
+  position: relative;
+  transition: transform .4s cubic-bezier(.16,1,.3,1);
+  display: flex;
+  flex-direction: column;
+}
+.screenshot-phone:hover { transform: translateY(-10px) scale(1.02); }
+.screenshot-notch {
+  width: 80px; height: 22px;
+  background: #18181B;
+  border-radius: 0 0 16px 16px;
+  margin: 0 auto;
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04);
+}
+.screenshot-screen {
+  flex: 1;
+  padding: 32px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Home screen mock */
+.ss-home-header { display: flex; justify-content: space-between; align-items: center; }
+.ss-logo        { font-size: 13px; font-weight: 800; color: #f0ede8; }
+.ss-bell        { font-size: 16px; }
+.ss-search      { background: rgba(255,255,255,.08); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: rgba(255,255,255,.35); }
+.ss-pill-row    { display: flex; gap: 6px; }
+.ss-pill        { padding: 4px 10px; border-radius: 20px; font-size: 9px; font-weight: 600; background: rgba(255,255,255,.08); color: rgba(255,255,255,.5); }
+.ss-pill.on     { background: #2563EB; color: #fff; }
+.ss-grid        { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ss-card        { background: #1f1f23; border-radius: 10px; overflow: hidden; }
+.ss-card-img    { height: 50px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.ss-card-info   { padding: 6px 8px; }
+.ss-card-name   { font-size: 9px; font-weight: 600; color: #f0ede8; }
+.ss-card-price  { font-size: 10px; font-weight: 700; color: #4F8EF7; }
+
+/* Marketplace mock */
+.ss-title       { font-size: 14px; font-weight: 700; color: #f0ede8; margin-bottom: 4px; }
+.ss-listing     { background: #1f1f23; border-radius: 10px; padding: 10px; display: flex; gap: 10px; align-items: center; }
+.ss-listing-thumb { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.ss-listing-info { flex: 1; }
+.ss-listing-name  { font-size: 10px; font-weight: 600; color: #f0ede8; }
+.ss-listing-price { font-size: 11px; font-weight: 700; color: #4F8EF7; }
+.ss-listing-cat   { font-size: 8px; color: rgba(255,255,255,.4); }
+
+/* Listing detail mock */
+.ss-detail-img  { height: 110px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+.ss-detail-tag  { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 8px; font-weight: 600; background: rgba(37,99,235,.2); color: #60A5FA; }
+.ss-detail-title { font-size: 13px; font-weight: 700; color: #f0ede8; }
+.ss-detail-price { font-size: 15px; font-weight: 700; color: #4F8EF7; }
+.ss-detail-btn  { background: #2563EB; color: #fff; border-radius: 20px; padding: 8px 14px; font-size: 10px; font-weight: 600; text-align: center; }
+
+/* Profile mock */
+.ss-banner      { height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: rgba(255,255,255,.5); margin-bottom: 24px; position: relative; }
+.ss-avatar      { position: absolute; bottom: -20px; left: 14px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #18181b; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; }
+.ss-profile-name { font-size: 12px; font-weight: 700; color: #f0ede8; }
+.ss-profile-uni  { font-size: 9px; color: rgba(255,255,255,.4); }
+.ss-stats-row   { display: flex; gap: 0; background: #1f1f23; border-radius: 10px; overflow: hidden; }
+.ss-stat        { flex: 1; padding: 8px 6px; text-align: center; }
+.ss-stat-num    { font-size: 13px; font-weight: 700; color: #f0ede8; }
+.ss-stat-lbl    { font-size: 7px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .05em; }
+.ss-stat + .ss-stat { border-left: 1px solid rgba(255,255,255,.06); }
+
+.screenshot-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,.6);
+}
+.screenshot-item.active .screenshot-label { color: var(--white); }
+
+/* Scroll hint */
+.screenshots-hint {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255,255,255,.35);
+  margin-top: 8px;
+}
+
+/* ============================================================
+   FUTURE FEATURES
+   ============================================================ */
+.future {
+  padding: 120px 0;
+  background: var(--off-white);
+}
+.future-header {
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto 64px;
+}
+.future-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.future-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: transform .3s, box-shadow .3s, border-color .3s;
+}
+.future-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(37,99,235,.2);
+}
+.future-card-icon {
+  width: 48px; height: 48px;
+  background: var(--blue-tint);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.future-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--blue-tint);
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.future-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.future-card-desc {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.55;
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq {
+  padding: 120px 0;
+  background: var(--white);
+}
+.faq-inner {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  align-items: start;
+}
+.faq-sticky {
+  position: sticky;
+  top: 96px;
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.faq-item:first-child { border-top: 1px solid var(--border); }
+
+.faq-question {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color .2s;
+}
+.faq-question:hover { color: var(--blue); }
+
+.faq-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-3);
+  transition: all .3s;
+}
+.faq-item.open .faq-icon {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--white);
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s cubic-bezier(.16,1,.3,1), padding .3s;
+}
+.faq-answer-inner {
+  padding: 0 4px 20px;
+  font-size: 15px;
+  color: var(--text-3);
+  line-height: 1.7;
+}
+.faq-item.open .faq-answer { max-height: 300px; }
+
+/* ============================================================
+   CTA STRIP
+   ============================================================ */
+.cta-strip {
+  padding: 100px 0;
+  background: linear-gradient(135deg, var(--blue-deeper) 0%, var(--blue) 60%, #3B82F6 100%);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.cta-strip::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 70%);
+  top: -200px; right: -100px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.cta-strip::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,.06) 0%, transparent 70%);
+  bottom: -100px; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.cta-strip-inner { position: relative; z-index: 1; }
+.cta-title {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -.03em;
+  margin-bottom: 16px;
+}
+.cta-subtitle {
+  font-size: 18px;
+  color: rgba(255,255,255,.75);
+  margin-bottom: 40px;
+}
+.cta-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cta-btn-white {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 32px;
+  background: var(--white);
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 28px rgba(0,0,0,.2);
+  transition: all .25s;
+}
+.cta-btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,.28); }
+
+.cta-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1.5px solid rgba(255,255,255,.45);
+  transition: all .25s;
+}
+.cta-btn-outline:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.8); transform: translateY(-1px); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: var(--text);
+  padding: 72px 0 32px;
+  color: rgba(255,255,255,.65);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 64px;
+}
+.footer-brand {}
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.footer-logo-mark {
+  width: 36px; height: 36px;
+  background: var(--blue);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff;
+}
+.footer-logo-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -.03em;
+}
+.footer-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 240px;
+  margin-bottom: 24px;
+}
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255,255,255,.08);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,.7);
+}
+
+.footer-col {}
+.footer-col-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+}
+.footer-links a {
+  font-size: 14px;
+  color: rgba(255,255,255,.55);
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--white); }
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-copy {
+  font-size: 13px;
+  color: rgba(255,255,255,.4);
+}
+.footer-copy a {
+  color: rgba(255,255,255,.6);
+  transition: color .2s;
+}
+.footer-copy a:hover { color: var(--white); }
+
+.footer-legal {
+  display: flex;
+  gap: 24px;
+}
+.footer-legal a {
+  font-size: 13px;
+  color: rgba(255,255,255,.4);
+  transition: color .2s;
+}
+.footer-legal a:hover { color: var(--white); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .hero-inner    { grid-template-columns: 1fr; gap: 64px; padding: 80px 0; }
+  .hero-visual   { justify-content: center; }
+  .why-inner     { grid-template-columns: 1fr; gap: 48px; }
+  .why-visual    { order: -1; }
+  .why-card-stack { height: 320px; }
+  .how-steps     { grid-template-columns: 1fr 1fr; gap: 48px; }
+  .how-steps::before { display: none; }
+  .future-grid   { grid-template-columns: 1fr 1fr; }
+  .footer-grid   { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav-links     { display: none; }
+  .nav-cta .btn-primary { display: none; }
+  .nav-hamburger { display: flex; }
+  .features-grid { grid-template-columns: 1fr; }
+  .stats-inner   { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .how-steps     { grid-template-columns: 1fr; }
+  .faq-inner     { grid-template-columns: 1fr; gap: 40px; }
+  .faq-sticky    { position: static; }
+  .future-grid   { grid-template-columns: 1fr; }
+  .footer-grid   { grid-template-columns: 1fr; gap: 32px; }
+  .float-card-a, .float-card-b, .float-card-c { display: none; }
+  .hero-inner    { text-align: center; }
+  .hero-subtitle { margin: 0 auto 40px; }
+  .hero-actions  { justify-content: center; }
+  .hero-social-proof { justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ========================================================
+     NAVIGATION
+     ======================================================== -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <div class="nav-brand">
+      <div class="nav-logo">SX</div>
+      <span class="nav-name">StudX</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#screenshots">App</a></li>
+      <li><a href="#future">Coming Soon</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <a href="#hero" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M8 12l4-4 4 4M12 8v8"/></svg>
+        Download App
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#features"    onclick="closeMobileMenu()">Features</a>
+  <a href="#how"         onclick="closeMobileMenu()">How It Works</a>
+  <a href="#screenshots" onclick="closeMobileMenu()">App</a>
+  <a href="#future"      onclick="closeMobileMenu()">Coming Soon</a>
+  <a href="#faq"         onclick="closeMobileMenu()">FAQ</a>
+  <a href="#hero" class="btn-primary" onclick="closeMobileMenu()">Download App</a>
+</div>
+
+
+<!-- ========================================================
+     HERO
+     ======================================================== -->
+<section class="hero" id="hero">
+  <div class="container hero-inner">
+
+    <!-- Left: copy -->
+    <div class="hero-content">
+      <div class="hero-eyebrow fade-up">
+        <span class="hero-eyebrow-dot"></span>
+        Now Available
+      </div>
+
+      <h1 class="hero-title fade-up delay-1">
+        The Student<br><span>Marketplace.</span>
+      </h1>
+
+      <p class="hero-subtitle fade-up delay-2">
+        Buy, sell and discover products and opportunities within your student community.
+        Built by students, for students.
+      </p>
+
+      <div class="hero-actions fade-up delay-3">
+        <a href="#" class="hero-btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M8 12l4-4 4 4M12 8v8"/></svg>
+          Download App
+        </a>
+        <a href="#how" class="hero-btn-secondary">
+          Learn More
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="hero-social-proof fade-up delay-4">
+        <div class="hero-avatars">
+          <div class="hero-avatar">T</div>
+          <div class="hero-avatar">A</div>
+          <div class="hero-avatar">L</div>
+          <div class="hero-avatar">M</div>
+        </div>
+        <div class="hero-proof-text">
+          <strong>Join your campus community</strong><br>
+          Free to download and use
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: phone mockup -->
+    <div class="hero-visual fade-up delay-2">
+      <div class="phone-glow"></div>
+
+      <!-- Floating cards -->
+      <div class="float-card float-card-a">
+        <div class="float-card-icon">✅</div>
+        <div class="float-card-text">
+          <strong>Order Confirmed</strong>
+          <span>Textbook — R180</span>
+        </div>
+      </div>
+
+      <div class="float-card float-card-b">
+        <div class="float-card-icon">⭐</div>
+        <div class="float-card-text">
+          <strong>New Review</strong>
+          <span>"Fast delivery!"</span>
+        </div>
+      </div>
+
+      <div class="float-card float-card-c">
+        <div class="float-card-icon">💬</div>
+        <div class="float-card-text">
+          <strong>Message</strong>
+          <span>Is this still available?</span>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-status-bar">
+            <span class="phone-time">9:41</span>
+            <div class="phone-icons">
+              <span>▲▲▲</span>
+              <span>WiFi</span>
+              <span>🔋</span>
+            </div>
+          </div>
+
+          <div class="phone-content">
+            <div class="phone-header">
+              <div class="phone-logo-small">
+                <div class="phone-logo-mark">SX</div>
+                <span class="phone-brand">StudX</span>
+              </div>
+              <div class="phone-bell">🔔</div>
+            </div>
+
+            <div class="phone-search">🔍 Search listings...</div>
+
+            <div class="phone-pills">
+              <div class="phone-pill active">All</div>
+              <div class="phone-pill">⭐ Featured</div>
+              <div class="phone-pill">📦 Products</div>
+              <div class="phone-pill">🛠 Services</div>
+            </div>
+
+            <div class="phone-grid">
+              <div class="phone-card">
+                <div class="phone-card-img bg-blue">📚</div>
+                <div class="phone-card-body">
+                  <div class="phone-card-title">Engineering Textbook</div>
+                  <div class="phone-card-price">R180</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-img bg-purp">💻</div>
+                <div class="phone-card-body">
+                  <div class="phone-card-title">Python Tutoring</div>
+                  <div class="phone-card-price">R150/hr</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-img bg-rose">🎨</div>
+                <div class="phone-card-body">
+                  <div class="phone-card-title">Design Notes</div>
+                  <div class="phone-card-price">R60</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-img bg-amber">🎧</div>
+                <div class="phone-card-body">
+                  <div class="phone-card-title">Headphones</div>
+                  <div class="phone-card-price">R320</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone-bottom-nav">
+            <div class="phone-nav-item active">🏠<span>Home</span></div>
+            <div class="phone-nav-item">💬</div>
+            <div class="phone-nav-item">➕</div>
+            <div class="phone-nav-item">🔔</div>
+            <div class="phone-nav-item">👤</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================
+     STATS
+     ======================================================== -->
+<div class="stats-strip" id="stats">
+  <div class="container">
+    <div class="stats-inner">
+      <div class="stat-item fade-up">
+        <div class="stat-number" data-target="5000">0</div>
+        <div class="stat-label">Student Users</div>
+      </div>
+      <div class="stat-item fade-up delay-1">
+        <div class="stat-number" data-target="1200">0</div>
+        <div class="stat-label">Active Listings</div>
+      </div>
+      <div class="stat-item fade-up delay-2">
+        <div class="stat-number" data-target="8">0</div>
+        <div class="stat-label">Partner Campuses</div>
+      </div>
+      <div class="stat-item fade-up delay-3">
+        <div class="stat-number" data-target="98">0</div>
+        <div class="stat-label">Satisfaction Rate (%)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================================================
+     FEATURES
+     ======================================================== -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="features-header">
+      <div class="section-label fade-up">✦ Features</div>
+      <h2 class="section-title fade-up delay-1">Everything you need to trade on campus</h2>
+      <p class="section-subtitle fade-up delay-2">StudX packs everything student sellers and buyers need into one clean, fast, mobile-first experience.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-icon">📦</div>
+        <h3 class="feature-title">Create Listings</h3>
+        <p class="feature-desc">Photograph your item, add a price and tags, and go live in under a minute. Reach every student on your campus instantly.</p>
+      </div>
+      <div class="feature-card fade-up delay-1">
+        <div class="feature-icon">🔍</div>
+        <h3 class="feature-title">Browse Products</h3>
+        <p class="feature-desc">Filter by category, search by tag, and discover featured listings. Find exactly what you need without the noise.</p>
+      </div>
+      <div class="feature-card fade-up delay-2">
+        <div class="feature-icon">🔐</div>
+        <h3 class="feature-title">Google Sign-In</h3>
+        <p class="feature-desc">Log in with your student Google account in one tap. No new passwords to remember, no long sign-up forms.</p>
+      </div>
+      <div class="feature-card fade-up delay-3">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Real-Time Marketplace</h3>
+        <p class="feature-desc">Listings, messages and order updates arrive instantly via Firestore. The marketplace is always live and always current.</p>
+      </div>
+      <div class="feature-card fade-up delay-1">
+        <div class="feature-icon">✨</div>
+        <h3 class="feature-title">Modern Experience</h3>
+        <p class="feature-desc">A dark gallery aesthetic, smooth animations and a clean layout make browsing feel premium, not cluttered.</p>
+      </div>
+      <div class="feature-card fade-up delay-2">
+        <div class="feature-icon">🎓</div>
+        <h3 class="feature-title">Student-Focused</h3>
+        <p class="feature-desc">Coupons, verified sellers, wishlist, reviews and a full order lifecycle built around how students actually trade.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+     WHY STUDX
+     ======================================================== -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="why-inner">
+
+      <div class="why-visual fade-up">
+        <div class="why-card-stack">
+          <div class="why-card why-card-back-2"></div>
+          <div class="why-card why-card-back-1"></div>
+          <div class="why-card why-card-main">
+            <div class="why-card-emoji">🎓</div>
+            <div class="why-card-title">Built for Student Life</div>
+            <div class="why-card-desc">From selling last year's textbooks to offering tutoring sessions, StudX fits every part of the student economy.</div>
+            <div class="why-card-badge">✓ Verified Sellers</div>
+          </div>
+          <div class="why-big-card">
+            <div class="why-big-number" data-counter="true">0</div>
+            <div class="why-big-label">students trading today</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="why-content fade-up delay-2">
+        <div class="section-label">✦ Why StudX</div>
+        <h2 class="section-title">Your campus economy, finally organised</h2>
+        <p class="section-subtitle">Generic marketplaces were not built with students in mind. StudX is. Every feature exists to make buying, selling and connecting within your community easier, safer and faster.</p>
+
+        <div class="why-points">
+          <div class="why-point">
+            <div class="why-point-icon">🔒</div>
+            <div>
+              <div class="why-point-title">Safe and Trustworthy</div>
+              <div class="why-point-desc">Verified seller badges, mutual trade confirmation and admin payment oversight keep every transaction protected.</div>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-point-icon">💬</div>
+            <div>
+              <div class="why-point-title">Direct Communication</div>
+              <div class="why-point-desc">Message sellers in real time before you commit. Ask questions, negotiate prices and agree on handover details.</div>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-point-icon">📊</div>
+            <div>
+              <div class="why-point-title">Transparent Orders</div>
+              <div class="why-point-desc">Track every step from placement to delivery. Both buyer and seller confirm the trade before it closes.</div>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-point-icon">🆓</div>
+            <div>
+              <div class="why-point-title">Free to Use</div>
+              <div class="why-point-desc">No listing fees, no commission cuts. StudX is free for every student on every campus.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+     HOW IT WORKS
+     ======================================================== -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="how-header">
+      <div class="section-label fade-up">✦ How It Works</div>
+      <h2 class="section-title fade-up delay-1">Trading made simple</h2>
+      <p class="section-subtitle fade-up delay-2" style="margin:0 auto;">Four steps from download to done. No friction, no confusion.</p>
+    </div>
+
+    <div class="how-steps">
+      <div class="how-step fade-up">
+        <div class="how-step-num">🔑</div>
+        <h3 class="how-step-title">Sign In</h3>
+        <p class="how-step-desc">Use your Google account or create a StudX account in seconds.</p>
+      </div>
+      <div class="how-step fade-up delay-1">
+        <div class="how-step-num">🔍</div>
+        <h3 class="how-step-title">Browse or List</h3>
+        <p class="how-step-desc">Find what you need or publish a listing with photos, price and tags.</p>
+      </div>
+      <div class="how-step fade-up delay-2">
+        <div class="how-step-num">💬</div>
+        <h3 class="how-step-title">Connect</h3>
+        <p class="how-step-desc">Message the seller directly, ask questions and agree on the details.</p>
+      </div>
+      <div class="how-step fade-up delay-3">
+        <div class="how-step-num">✅</div>
+        <h3 class="how-step-title">Complete the Trade</h3>
+        <p class="how-step-desc">Place your order and confirm delivery. Both sides close the deal together.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+     SCREENSHOTS
+     ======================================================== -->
+<section class="screenshots" id="screenshots">
+  <div class="container">
+    <div class="screenshots-header">
+      <div class="section-label fade-up" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);">✦ The App</div>
+      <h2 class="section-title fade-up delay-1">See StudX in action</h2>
+      <p class="section-subtitle fade-up delay-2">Drag or scroll to explore the app experience.</p>
+    </div>
+  </div>
+
+  <div class="screenshots-track" id="screenshotsTrack">
+
+    <!-- Home -->
+    <div class="screenshot-item">
+      <div class="screenshot-phone">
+        <div class="screenshot-notch"></div>
+        <div class="screenshot-screen" style="background:linear-gradient(160deg,#0f0f11,#18181b)">
+          <div class="ss-home-header">
+            <div class="ss-logo">StudX</div>
+            <div class="ss-bell">🔔</div>
+          </div>
+          <div class="ss-search" style="background:rgba(255,255,255,.07);border-radius:10px;padding:8px 12px;font-size:11px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:6px;">🔍 Search listings...</div>
+          <div class="ss-pill-row">
+            <div class="ss-pill on">All</div>
+            <div class="ss-pill">Products</div>
+            <div class="ss-pill">Services</div>
+          </div>
+          <div class="ss-grid">
+            <div class="ss-card">
+              <div class="ss-card-img" style="background:linear-gradient(135deg,#1D4ED8,#3B82F6)">📚</div>
+              <div class="ss-card-info"><div class="ss-card-name">Textbooks</div><div class="ss-card-price">R180</div></div>
+            </div>
+            <div class="ss-card">
+              <div class="ss-card-img" style="background:linear-gradient(135deg,#5B21B6,#8B5CF6)">💻</div>
+              <div class="ss-card-info"><div class="ss-card-name">Tutoring</div><div class="ss-card-price">R150/hr</div></div>
+            </div>
+            <div class="ss-card">
+              <div class="ss-card-img" style="background:linear-gradient(135deg,#9F1239,#F43F5E)">🎨</div>
+              <div class="ss-card-info"><div class="ss-card-name">Design Notes</div><div class="ss-card-price">R60</div></div>
+            </div>
+            <div class="ss-card">
+              <div class="ss-card-img" style="background:linear-gradient(135deg,#92400E,#F59E0B)">🎧</div>
+              <div class="ss-card-info"><div class="ss-card-name">Headphones</div><div class="ss-card-price">R320</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screenshot-label">Home</div>
+    </div>
+
+    <!-- Marketplace -->
+    <div class="screenshot-item">
+      <div class="screenshot-phone">
+        <div class="screenshot-notch"></div>
+        <div class="screenshot-screen" style="background:linear-gradient(160deg,#0f0f11,#18181b)">
+          <div class="ss-title" style="font-size:14px;font-weight:700;color:#f0ede8;margin-bottom:12px;">Marketplace</div>
+          <div class="ss-listing" style="background:#1f1f23;border-radius:10px;padding:10px;display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#1D4ED8,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📚</div>
+            <div style="flex:1;">
+              <div style="font-size:10px;font-weight:600;color:#f0ede8;">Engineering Textbook</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);">Product</div>
+              <div style="font-size:11px;font-weight:700;color:#4F8EF7;">R180</div>
+            </div>
+          </div>
+          <div class="ss-listing" style="background:#1f1f23;border-radius:10px;padding:10px;display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#5B21B6,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💻</div>
+            <div style="flex:1;">
+              <div style="font-size:10px;font-weight:600;color:#f0ede8;">Python Tutoring</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);">Service</div>
+              <div style="font-size:11px;font-weight:700;color:#4F8EF7;">R150/hr</div>
+            </div>
+          </div>
+          <div class="ss-listing" style="background:#1f1f23;border-radius:10px;padding:10px;display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#92400E,#F59E0B);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎧</div>
+            <div style="flex:1;">
+              <div style="font-size:10px;font-weight:600;color:#f0ede8;">Sony Headphones</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);">Product</div>
+              <div style="font-size:11px;font-weight:700;color:#4F8EF7;">R320</div>
+            </div>
+          </div>
+          <div class="ss-listing" style="background:#1f1f23;border-radius:10px;padding:10px;display:flex;gap:10px;align-items:center;">
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#9F1239,#F43F5E);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📐</div>
+            <div style="flex:1;">
+              <div style="font-size:10px;font-weight:600;color:#f0ede8;">Maths Notes Bundle</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);">Product</div>
+              <div style="font-size:11px;font-weight:700;color:#4F8EF7;">R85</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screenshot-label">Marketplace</div>
+    </div>
+
+    <!-- Listing Detail -->
+    <div class="screenshot-item">
+      <div class="screenshot-phone">
+        <div class="screenshot-notch"></div>
+        <div class="screenshot-screen" style="background:linear-gradient(160deg,#0f0f11,#18181b)">
+          <div style="height:100px;border-radius:12px;background:linear-gradient(135deg,#1D4ED8,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:12px;">📚</div>
+          <div style="display:inline-block;padding:3px 8px;border-radius:20px;font-size:8px;font-weight:600;background:rgba(37,99,235,.2);color:#60A5FA;margin-bottom:8px;">📦 Product</div>
+          <div style="font-size:13px;font-weight:700;color:#f0ede8;margin-bottom:4px;">Engineering Textbook 3rd Ed.</div>
+          <div style="display:flex;gap:4px;margin-bottom:8px;">
+            <span style="font-size:8px;padding:2px 6px;background:rgba(255,255,255,.08);border-radius:10px;color:rgba(255,255,255,.5);">#engineering</span>
+            <span style="font-size:8px;padding:2px 6px;background:rgba(255,255,255,.08);border-radius:10px;color:rgba(255,255,255,.5);">#textbook</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px;">
+            <span style="font-size:10px;color:#F59E0B;">★★★★★</span>
+            <span style="font-size:9px;color:rgba(255,255,255,.4);">4.8 (12)</span>
+          </div>
+          <div style="font-size:18px;font-weight:700;color:#4F8EF7;margin-bottom:12px;">R180</div>
+          <div style="background:#2563EB;color:#fff;border-radius:20px;padding:10px 14px;font-size:10px;font-weight:600;text-align:center;margin-bottom:6px;">Add to Cart</div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(37,99,235,.4);color:#60A5FA;border-radius:20px;padding:8px 14px;font-size:10px;font-weight:600;text-align:center;">💬 Message Seller</div>
+        </div>
+      </div>
+      <div class="screenshot-label">Listing Details</div>
+    </div>
+
+    <!-- Profile -->
+    <div class="screenshot-item">
+      <div class="screenshot-phone">
+        <div class="screenshot-notch"></div>
+        <div class="screenshot-screen" style="background:linear-gradient(160deg,#0f0f11,#18181b)">
+          <div style="height:70px;border-radius:12px;background:linear-gradient(135deg,#1e40af,#2563EB);margin-bottom:28px;position:relative;">
+            <div style="position:absolute;bottom:-20px;left:14px;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1e40af,#2563EB);border:2px solid #18181b;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;">T</div>
+          </div>
+          <div style="padding:0 2px;">
+            <div style="font-size:13px;font-weight:700;color:#f0ede8;display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+              Tebogo M.
+              <span style="font-size:8px;background:#dcfce7;color:#15803d;padding:2px 6px;border-radius:10px;font-weight:700;">Verified</span>
+            </div>
+            <div style="font-size:9px;color:rgba(255,255,255,.4);margin-bottom:12px;">🎓 UCT · BSc Computer Science</div>
+            <div style="display:flex;background:#1f1f23;border-radius:10px;overflow:hidden;margin-bottom:14px;">
+              <div style="flex:1;padding:10px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.06);">
+                <div style="font-size:16px;font-weight:700;color:#f0ede8;">12</div>
+                <div style="font-size:7px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Listings</div>
+              </div>
+              <div style="flex:1;padding:10px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.06);">
+                <div style="font-size:16px;font-weight:700;color:#f0ede8;">4.9</div>
+                <div style="font-size:7px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Rating</div>
+              </div>
+              <div style="flex:1;padding:10px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.06);">
+                <div style="font-size:16px;font-weight:700;color:#f0ede8;">34</div>
+                <div style="font-size:7px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Reviews</div>
+              </div>
+              <div style="flex:1;padding:10px 6px;text-align:center;">
+                <div style="font-size:16px;font-weight:700;color:#15803d;">✓</div>
+                <div style="font-size:7px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Verified</div>
+              </div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">My Listings</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div style="background:#1f1f23;border-radius:10px;overflow:hidden;">
+                <div style="height:44px;background:linear-gradient(135deg,#1D4ED8,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:16px;">📚</div>
+                <div style="padding:6px 8px;font-size:8px;font-weight:600;color:#f0ede8;">Textbook</div>
+              </div>
+              <div style="background:#1f1f23;border-radius:10px;overflow:hidden;">
+                <div style="height:44px;background:linear-gradient(135deg,#5B21B6,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:16px;">💻</div>
+                <div style="padding:6px 8px;font-size:8px;font-weight:600;color:#f0ede8;">Tutoring</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screenshot-label">Profile</div>
+    </div>
+
+  </div>
+  <p class="screenshots-hint">Drag to explore</p>
+</section>
+
+
+<!-- ========================================================
+     FUTURE FEATURES
+     ======================================================== -->
+<section class="future" id="future">
+  <div class="container">
+    <div class="future-header">
+      <div class="section-label fade-up">✦ Coming Soon</div>
+      <h2 class="section-title fade-up delay-1">What we're building next</h2>
+      <p class="section-subtitle fade-up delay-2" style="margin:0 auto;">StudX is actively growing. Here is what is on the roadmap for the next release.</p>
+    </div>
+
+    <div class="future-grid">
+      <div class="future-card fade-up">
+        <div class="future-card-icon">💬</div>
+        <div>
+          <div class="future-badge">Coming Soon</div>
+          <div class="future-card-title">Enhanced Messaging</div>
+          <div class="future-card-desc">Push notifications for new messages so you never miss a trade opportunity, even when the app is closed.</div>
+        </div>
+      </div>
+      <div class="future-card fade-up delay-1">
+        <div class="future-card-icon">⭐</div>
+        <div>
+          <div class="future-badge">Coming Soon</div>
+          <div class="future-card-title">Ratings and Reviews</div>
+          <div class="future-card-desc">Build your reputation as a trusted seller. Reviews are already live on the web app and arriving on mobile next.</div>
+        </div>
+      </div>
+      <div class="future-card fade-up delay-2">
+        <div class="future-card-icon">♡</div>
+        <div>
+          <div class="future-badge">Coming Soon</div>
+          <div class="future-card-title">Saved Listings</div>
+          <div class="future-card-desc">Wishlist any listing with a single tap and revisit it whenever you are ready to buy.</div>
+        </div>
+      </div>
+      <div class="future-card fade-up delay-3">
+        <div class="future-card-icon">🔎</div>
+        <div>
+          <div class="future-badge">Planned</div>
+          <div class="future-card-title">Advanced Search</div>
+          <div class="future-card-desc">Full-text search powered by Algolia, with price range sliders, category filters and sorting options.</div>
+        </div>
+      </div>
+      <div class="future-card fade-up delay-1">
+        <div class="future-card-icon">🏫</div>
+        <div>
+          <div class="future-badge">Planned</div>
+          <div class="future-card-title">Campus Communities</div>
+          <div class="future-card-desc">Dedicated spaces for each campus so listings stay relevant to students on your specific campus.</div>
+        </div>
+      </div>
+      <div class="future-card fade-up delay-2">
+        <div class="future-card-icon">📊</div>
+        <div>
+          <div class="future-badge">Planned</div>
+          <div class="future-card-title">Seller Analytics</div>
+          <div class="future-card-desc">See how many students viewed your listing, where they came from and how your sales are trending.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+     FAQ
+     ======================================================== -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-inner">
+
+      <div class="faq-sticky fade-up">
+        <div class="section-label">✦ FAQ</div>
+        <h2 class="section-title">Common questions</h2>
+        <p class="section-subtitle">Cannot find an answer? Reach us at <a href="mailto:support@studx.app" style="color:var(--blue);">support@studx.app</a></p>
+      </div>
+
+      <div class="faq-list fade-up delay-1">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Is StudX safe to use?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              StudX has verified seller badges, mutual trade confirmation and admin payment oversight. Every transaction requires both parties to confirm completion, so neither side is left in the dark. We also monitor disputes and review flagged listings.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do I create an account?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              Download the app and tap Sign In with Google to use your existing student Google account, or register with any email address. The whole process takes under 30 seconds.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do I create a listing?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              Tap the + button in the navigation bar. Add up to 5 photos, write a title, set a price, choose a category, and add tags so buyers can find you. Your listing goes live the moment you hit Publish.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do payments work?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              Buyers and sellers agree on payment terms directly. Once the buyer confirms they have received the item, the admin releases the payment record. StudX is currently a coordination and trust layer, not a payment processor. We recommend EFT, cash on handover or platforms like SnapScan.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What kinds of listings are allowed?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              Anything a student would legitimately buy or sell: textbooks, notes, electronics, clothing, tutoring, design services, coding help, and more. Listings for illegal goods, counterfeit items or anything that violates our terms are removed immediately.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What if something goes wrong with my order?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              Either party can raise a dispute from the order detail screen. Once a dispute is raised, our admin team reviews the case and steps in to resolve it. We take every dispute seriously and aim to respond within 24 hours.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Is StudX free?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              Yes. StudX is completely free to download, browse and list on. There are no listing fees and no commission on sales. We believe students deserve a marketplace that does not take a cut of their hustle.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do I contact support?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <div class="faq-answer-inner">
+              Send us an email at support@studx.app. If you are a student with a billing issue or a safety concern, include your order ID and we will prioritise your case. We also respond via the in-app chat feature.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+     CTA STRIP
+     ======================================================== -->
+<section class="cta-strip">
+  <div class="container cta-strip-inner">
+    <div class="section-label fade-up" style="background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);margin-bottom:24px;">✦ Ready to start?</div>
+    <h2 class="cta-title fade-up delay-1">Your campus marketplace awaits.</h2>
+    <p class="cta-subtitle fade-up delay-2">Join students who are already buying, selling and connecting on StudX.</p>
+    <div class="cta-actions fade-up delay-3">
+      <a href="#" class="cta-btn-white">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M8 12l4-4 4 4M12 8v8"/></svg>
+        Download StudX
+      </a>
+      <a href="#features" class="cta-btn-outline">
+        Explore Features
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+     FOOTER
+     ======================================================== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-mark">SX</div>
+          <span class="footer-logo-name">StudX</span>
+        </div>
+        <p class="footer-desc">The student marketplace built for South African university communities. Buy, sell and connect on campus.</p>
+        <div class="footer-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Built by Horizon Synergy
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Product</div>
+        <ul class="footer-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#screenshots">App Screenshots</a></li>
+          <li><a href="#future">Coming Soon</a></li>
+          <li><a href="#">Download App</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Horizon Synergy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Legal</div>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Safety Guidelines</a></li>
+          <li><a href="#">support@studx.app</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        &copy; 2025 StudX. A <a href="#">Horizon Synergy</a> product. All rights reserved.
+      </div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ========================================================
+     JAVASCRIPT
+     ======================================================== -->
+<script>
+/* --- Navbar scroll state --- */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+/* --- Mobile menu --- */
+const hamburger     = document.getElementById('hamburger');
+const mobileMenu    = document.getElementById('mobile-menu');
+
+hamburger.addEventListener('click', () => {
+  const isOpen = mobileMenu.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', isOpen);
+  // Animate hamburger to X
+  const spans = hamburger.querySelectorAll('span');
+  if (isOpen) {
+    spans[0].style.transform = 'translateY(7px) rotate(45deg)';
+    spans[1].style.opacity   = '0';
+    spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+  } else {
+    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+});
+
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', false);
+  hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+}
+
+/* --- Scroll-triggered fade-in --- */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+/* --- Counter animations --- */
+function animateCounter(el, target, duration = 1800) {
+  const start     = performance.now();
+  const isFloat   = String(target).includes('.');
+  const increment = target / (duration / 16);
+
+  const step = (now) => {
+    const elapsed  = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    const current  = Math.round(target * eased);
+
+    if (isFloat) {
+      el.textContent = (target * eased).toFixed(1);
+    } else {
+      el.textContent = current.toLocaleString();
+    }
+
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = isFloat ? target : target.toLocaleString();
+  };
+  requestAnimationFrame(step);
+}
+
+// Observer for stat counters
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el     = entry.target;
+    const target = parseFloat(el.dataset.target);
+    if (!isNaN(target)) animateCounter(el, target);
+    counterObserver.unobserve(el);
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
+
+// Why section counter
+const whyCounters = document.querySelectorAll('[data-counter="true"]');
+const whyCounterObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    animateCounter(entry.target, 5000);
+    entry.target.parentElement.querySelector('.why-big-label').textContent = 'students trading today';
+    whyCounterObs.unobserve(entry.target);
+  });
+}, { threshold: 0.5 });
+whyCounters.forEach(el => whyCounterObs.observe(el));
+
+/* --- FAQ accordion --- */
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item     = btn.closest('.faq-item');
+    const wasOpen  = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+    });
+    // Open clicked (unless it was already open)
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
+
+/* --- Screenshots drag-scroll --- */
+const track = document.getElementById('screenshotsTrack');
+let isDragging = false, startX, scrollLeft;
+
+track.addEventListener('mousedown', e => {
+  isDragging = true;
+  startX     = e.pageX - track.offsetLeft;
+  scrollLeft = track.scrollLeft;
+  track.style.cursor = 'grabbing';
+});
+track.addEventListener('mouseleave', () => { isDragging = false; track.style.cursor = 'grab'; });
+track.addEventListener('mouseup',    () => { isDragging = false; track.style.cursor = 'grab'; });
+track.addEventListener('mousemove',  e => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const x    = e.pageX - track.offsetLeft;
+  const walk = (x - startX) * 1.5;
+  track.scrollLeft = scrollLeft - walk;
+});
+
+// Touch drag
+track.addEventListener('touchstart', e => {
+  startX     = e.touches[0].pageX - track.offsetLeft;
+  scrollLeft = track.scrollLeft;
+}, { passive: true });
+track.addEventListener('touchmove', e => {
+  const x    = e.touches[0].pageX - track.offsetLeft;
+  const walk = x - startX;
+  track.scrollLeft = scrollLeft - walk;
+}, { passive: true });
+
+/* --- Smooth scroll for anchor links --- */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    const offset = 72; // navbar height
+    const top    = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>
