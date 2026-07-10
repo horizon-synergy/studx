@@ -1,0 +1,241 @@
+/* src/styles/Admin.module.css */
+
+.page {
+  max-width: 76rem; margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+@media (min-width: 640px) { .page { padding: 2rem 1.5rem 4rem; } }
+
+.pageHeader {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-wrap: wrap;
+  gap: 1rem; margin-bottom: 1.75rem;
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  font-weight: 700; color: var(--text-primary);
+  letter-spacing: -0.04em;
+  display: flex; align-items: center; gap: 0.625rem; flex-wrap: wrap;
+}
+
+.pageSubtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+.adminBadge {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem; border-radius: 999px;
+  background: var(--warn-bg); color: var(--warn-text);
+  border: 1px solid var(--warn-border);
+}
+
+/* ── Alert cards ───────────────────────────────────────── */
+.alertRow { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+
+.alertCard {
+  flex: 1; min-width: 14rem;
+  display: flex; align-items: center; gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.alertBtn {
+  margin-left: auto;
+  padding: 0.35rem 0.875rem;
+  font-size: 0.75rem; font-weight: 600; font-family: var(--font-body);
+  background: var(--bg-subtle); color: var(--text-secondary);
+  border: 1px solid var(--border-color); border-radius: var(--radius-md);
+  cursor: pointer; transition: all var(--transition); white-space: nowrap;
+}
+.alertBtn:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+
+/* ── Filter row ────────────────────────────────────────── */
+.filterRow { margin-bottom: 1rem; }
+.filterPills { display: flex; gap: 0.375rem; flex-wrap: wrap; margin-top: 0.625rem; }
+
+.pill {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.72rem; font-weight: 500; font-family: var(--font-body);
+  border-radius: 999px; border: 1px solid var(--border-color);
+  background: var(--bg-subtle); color: var(--text-muted);
+  cursor: pointer; white-space: nowrap; transition: all var(--transition);
+}
+.pill:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+.pillActive { background: var(--brand-blue); color: #fff; border-color: var(--brand-blue); }
+
+/* ── Table ─────────────────────────────────────────────── */
+.tableWrap { overflow-x: auto; }
+
+.table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+
+.table th {
+  text-align: left; padding: 0.5rem 0.75rem;
+  font-size: 0.65rem; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.07em; border-bottom: 1px solid var(--border-color);
+  white-space: nowrap; background: var(--bg-subtle);
+}
+.table td {
+  padding: 0.8rem 0.75rem;
+  color: var(--text-secondary); border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td      { background: var(--bg-hover); }
+
+/* Cell types */
+.cellTitle {
+  font-weight: 500; color: var(--text-primary);
+  display: block; max-width: 14rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cellPrice  { font-weight: 700; color: var(--brand-blue); font-size: 0.825rem; }
+.cellDate   { font-size: 0.68rem; color: var(--text-muted); }
+.cellMuted  { font-size: 0.75rem; color: var(--text-muted); }
+.cellLink   { color: var(--text-primary); text-decoration: none; transition: color var(--transition); }
+.cellLink:hover { color: var(--brand-blue); }
+
+.mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7rem; color: var(--text-muted);
+}
+
+/* Tags */
+.tagProduct {
+  font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.5rem;
+  border-radius: 999px; background: var(--brand-blue-light);
+  color: var(--brand-blue); text-transform: capitalize;
+}
+.tagService {
+  font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.5rem;
+  border-radius: 999px; background: var(--warn-bg);
+  color: var(--warn-text); text-transform: capitalize;
+}
+
+/* Role / Verified badges */
+.roleAdmin {
+  font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem;
+  border-radius: 999px; background: var(--warn-bg); color: var(--warn-text);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.roleUser {
+  font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.5rem;
+  border-radius: 999px; background: var(--bg-subtle); color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+.verifiedBadge {
+  font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.5rem;
+  border-radius: 999px; background: var(--success-bg); color: var(--success-text);
+  border: 1px solid var(--success-border);
+}
+.unverifiedBadge {
+  font-size: 0.65rem; font-weight: 500; padding: 0.15rem 0.5rem;
+  border-radius: 999px; background: var(--bg-subtle); color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+/* Status select */
+.statusSelect {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.72rem; font-family: var(--font-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input); color: var(--text-secondary);
+  cursor: pointer; outline: none;
+}
+
+/* ── Action buttons ────────────────────────────────────── */
+.btnRelease {
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 700;
+  font-family: var(--font-body);
+  background: var(--success-bg); color: var(--success-text);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  white-space: nowrap; transition: all var(--transition);
+}
+.btnRelease:hover:not(:disabled) { background: #dcfce7; }
+.btnRelease:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btnDelete {
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 600;
+  font-family: var(--font-body);
+  background: var(--danger-bg); color: var(--danger-text);
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  transition: all var(--transition); white-space: nowrap;
+}
+.btnDelete:hover:not(:disabled)  { background: #fee2e2; }
+.btnDelete:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btnEdit {
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 500;
+  font-family: var(--font-body);
+  background: var(--bg-subtle); color: var(--text-secondary);
+  border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+  cursor: pointer; transition: all var(--transition); white-space: nowrap;
+}
+.btnEdit:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+
+.btnVerify {
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 600;
+  font-family: var(--font-body);
+  background: var(--success-bg); color: var(--success-text);
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  transition: all var(--transition); white-space: nowrap;
+}
+.btnVerify:hover:not(:disabled) { background: #dcfce7; }
+
+.btnUnverify {
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 500;
+  font-family: var(--font-body);
+  background: var(--bg-subtle); color: var(--text-muted);
+  border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+  cursor: pointer; transition: all var(--transition); white-space: nowrap;
+}
+.btnUnverify:hover:not(:disabled) { background: var(--bg-hover); }
+
+.btnPromote {
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 600;
+  font-family: var(--font-body);
+  background: var(--brand-blue-light); color: var(--brand-blue);
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  transition: all var(--transition); white-space: nowrap;
+}
+.btnPromote:hover:not(:disabled) { background: #dbeafe; }
+
+.btnDemote {
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 500;
+  font-family: var(--font-body);
+  background: #fff7ed; color: #c2410c;
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  transition: all var(--transition); white-space: nowrap;
+}
+.btnDemote:hover:not(:disabled) { background: #ffedd5; }
+
+.btnVerify:disabled,.btnUnverify:disabled,.btnPromote:disabled,.btnDemote:disabled {
+  opacity: 0.5; cursor: not-allowed;
+}
+
+/* ── Empty row ─────────────────────────────────────────── */
+.emptyRow td {
+  text-align: center; color: var(--text-muted);
+  font-style: italic; padding: 2.5rem; font-size: 0.875rem;
+}
+
+/* ── Error / spinner ───────────────────────────────────── */
+.errorBanner {
+  padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+  background: var(--danger-bg); border: 1px solid var(--danger-border);
+  border-radius: var(--radius-lg); color: var(--danger-text);
+  font-size: 0.875rem;
+}
+
+.spinner {
+  width: 1.75rem; height: 1.75rem;
+  border: 2px solid var(--brand-blue); border-top-color: transparent;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+  margin: 4rem auto; display: block;
+}
