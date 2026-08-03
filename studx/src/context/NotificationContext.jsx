@@ -54,10 +54,12 @@ export function NotificationProvider({ children }) {
         (incoming) => {
           setNotifications(incoming)
         },
+        (err) => console.error('[notifications] subscription failed:', err),
       )
       unsubChatRef.current = subscribeToUnreadChats(
         currentUser.uid,
         setUnreadChats,
+        (err) => console.error('[unread-chats] subscription failed:', err),
       )
     }
 

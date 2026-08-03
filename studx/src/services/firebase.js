@@ -350,7 +350,7 @@ export const getNotifications = async (uid) => {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 }
 
-export const subscribeToNotifications = (uid, onData) => {
+export const subscribeToNotifications = (uid, onData, onError) => {
   const q = query(
     collection(db, 'notifications'),
     where('uid', '==', uid),
@@ -359,7 +359,10 @@ export const subscribeToNotifications = (uid, onData) => {
   )
   return onSnapshot(q, (snap) => {
     onData(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
-  }, () => onData([]))
+  }, (err) => {
+    if (onError) onError(err)
+    else onData([])
+  })
 }
 
 export const markNotificationRead = (id) =>
@@ -656,7 +659,7 @@ export const subscribeToUserChats = (uid, onChats, onError) => {
   }, (err) => { if (onError) onError(err); else console.error(err) })
 }
 
-export const subscribeToUnreadChats = (uid, onCount) => {
+export const subscribeToUnreadChats = (uid, onCount, onError) => {
   const q = query(
     collection(db, 'chats'),
     where('participants', 'array-contains', uid),
@@ -671,7 +674,10 @@ export const subscribeToUnreadChats = (uid, onCount) => {
       return data.lastMessage && data.lastSenderId !== uid
     }).length
     onCount(count)
-  }, () => onCount(0))
+  }, (err) => {
+    if (onError) onError(err)
+    else onCount(0)
+  })
 }
 
 export const deleteChat = async (chatId) => {
