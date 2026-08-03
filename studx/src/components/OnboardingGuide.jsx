@@ -1,28 +1,29 @@
 // src/components/OnboardingGuide.jsx
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { Search, MessageSquare, ShoppingCart, Package, X, ArrowLeft, ArrowRight, PartyPopper } from 'lucide-react'
 
 const STEPS = [
   {
-    icon: '🔍',
+    icon: Search,
     title: 'Browse the marketplace',
     body: 'Explore listings from fellow students — textbooks, services, notes, tutoring and more. Filter by category or search by tag to find exactly what you need.',
     action: { label: 'Browse now', to: '/' },
   },
   {
-    icon: '💬',
+    icon: MessageSquare,
     title: 'Message the seller',
     body: "Found something you like? Click the listing and tap \"Message Seller\" to chat directly. Ask questions, negotiate, and agree on the details before buying.",
     action: null,
   },
   {
-    icon: '🛒',
+    icon: ShoppingCart,
     title: 'Place your order',
     body: 'Add to cart or buy directly. Once the seller delivers, confirm receipt in your Orders tab. Both sides confirming marks the trade as complete.',
     action: null,
   },
   {
-    icon: '📦',
+    icon: Package,
     title: 'Sell your own stuff',
     body: 'Have old textbooks, notes, or a skill to offer? Go to Dashboard → Add Listing. Add photos, a price, and tags so buyers can find you easily.',
     action: { label: 'Open Dashboard', to: '/dashboard' },
@@ -83,7 +84,7 @@ export default function OnboardingGuide() {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '0.68rem', transition: 'all var(--transition)',
           }}
-        >✕</button>
+          ><X size={12} /></button>
 
         {/* Progress bar */}
         <div style={{ display: 'flex', gap: '0.3rem', marginBottom: '1.75rem' }}>
@@ -98,8 +99,8 @@ export default function OnboardingGuide() {
 
         {/* Content */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '1rem', lineHeight: 1 }}>
-            {current.icon}
+          <div style={{ color: 'var(--brand-blue)', marginBottom: '1rem', lineHeight: 1 }}>
+            <current.icon size={40} strokeWidth={1.5} />
           </div>
           <h2 style={{
             fontFamily: 'var(--font-display)',
@@ -138,7 +139,7 @@ export default function OnboardingGuide() {
                 transition: 'background var(--transition)',
               }}
             >
-              {current.action.label} →
+              {current.action.label} <ArrowRight size={12} />
             </Link>
           )}
 
@@ -155,7 +156,7 @@ export default function OnboardingGuide() {
                   transition: 'all var(--transition)',
                 }}
               >
-                ← Back
+                <ArrowLeft size={12} /> Back
               </button>
             )}
             <button
@@ -172,7 +173,7 @@ export default function OnboardingGuide() {
               onMouseEnter={(e) => e.currentTarget.style.background = 'var(--brand-blue-dark)'}
               onMouseLeave={(e) => e.currentTarget.style.background = 'var(--brand-blue)'}
             >
-              {isLast ? "Let's go! 🎉" : 'Next →'}
+              {isLast ? <>Let's go! <PartyPopper size={14} /></> : <>Next <ArrowRight size={12} /></>}
             </button>
           </div>
 

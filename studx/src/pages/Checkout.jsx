@@ -1,8 +1,9 @@
 // src/pages/Checkout.jsx
 import { useState }           from 'react'
-import { Link, useNavigate }  from 'react-router-dom'
+import { Link }                   from 'react-router-dom'
 import { useAuth }            from '../context/AuthContext'
 import { useCart }            from '../context/CartContext'
+import { PartyPopper, ArrowLeft, ShoppingCart, X, Tag, Lock } from 'lucide-react'
 import {
   createCheckout, createOrder,
   validateCoupon, redeemCoupon, applyCouponToTotal,
@@ -11,7 +12,6 @@ import {
 export default function Checkout() {
   const { currentUser }                          = useAuth()
   const { items, removeFromCart, clearCart, total } = useCart()
-  const navigate                                 = useNavigate()
 
   const [placing,       setPlacing]       = useState(false)
   const [done,          setDone]          = useState(false)
@@ -57,7 +57,7 @@ export default function Checkout() {
 
   if (done) return (
     <div style={{ maxWidth: '28rem', margin: '5rem auto', textAlign: 'center', padding: '0 1rem' }}>
-      <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🎉</div>
+      <div style={{ color: 'var(--brand-blue)', marginBottom: '1rem' }}><PartyPopper size={48} /></div>
       <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.04em', marginBottom: '0.5rem' }}>Order confirmed!</h1>
       <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '2rem' }}>
         Your order has been placed. Sellers will accept and begin processing shortly. Track progress in your Orders tab.
@@ -70,7 +70,7 @@ export default function Checkout() {
 
   return (
     <main style={c.page}>
-      <Link to="/" style={{ display: 'inline-flex', fontSize: '0.875rem', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '1.5rem' }}>← Continue Shopping</Link>
+      <Link to="/" style={{ display: 'inline-flex', fontSize: '0.875rem', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '1.5rem' }}><ArrowLeft size={14} /> Continue Shopping</Link>
       <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.2rem,4vw,1.5rem)', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.04em', marginBottom: '1.5rem' }}>Checkout</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
@@ -82,7 +82,7 @@ export default function Checkout() {
 
           {items.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🛒</div>
+              <div style={{ color: 'var(--text-muted)', marginBottom: '0.75rem' }}><ShoppingCart size={40} /></div>
               <p style={{ fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '1rem' }}>Your cart is empty</p>
               <Link to="/" style={{ color: 'var(--brand-blue)', fontWeight: 600, fontSize: '0.875rem', textDecoration: 'none' }}>Browse the marketplace</Link>
             </div>
@@ -96,7 +96,7 @@ export default function Checkout() {
                     <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{item.category}</p>
                   </div>
                   <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--brand-blue)', flexShrink: 0 }}>R{Number(item.price).toFixed(2)}</span>
-                  <button onClick={() => removeFromCart(item.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.8rem', padding: '0.25rem', borderRadius: 4 }}>✕</button>
+                  <button onClick={() => removeFromCart(item.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem', borderRadius: 4 }}><X size={14} /></button>
                 </div>
               ))}
             </div>
@@ -105,7 +105,7 @@ export default function Checkout() {
           {/* Coupon */}
           {items.length > 0 && (
             <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
-              <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>🏷 Have a coupon?</p>
+              <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.75rem' }}><Tag size={14} /> Have a coupon?</p>
               {couponApplied ? (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 'var(--radius-md)' }}>
                   <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#15803d', fontFamily: 'monospace' }}>{couponData.code}</span>
@@ -151,7 +151,7 @@ export default function Checkout() {
               {placing ? 'Placing order…' : 'Place Order'}
             </button>
             <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.875rem' }}>
-              🔒 Secure checkout via StudX
+              <Lock size={12} /> Secure checkout via StudX
             </p>
           </div>
         )}

@@ -5,10 +5,11 @@ import { useAuth }          from '../context/AuthContext'
 import { useCart }          from '../context/CartContext'
 import { useTheme }         from '../context/ThemeContext'
 import { useNotifications } from '../context/NotificationContext'
+import { Sun, Moon, ShoppingCart, Bell, LogOut } from 'lucide-react'
 import s from '../styles/Navbar.module.css'
 
 export default function Navbar() {
-  const { currentUser, isAdmin, logout } = useAuth()
+  const { currentUser, isAdmin, extProfile, logout } = useAuth()
   const { count }                        = useCart()
   const { isDark, toggle }               = useTheme()
   const { notifications, unreadChats, unreadNotifs, markRead, markAllRead } = useNotifications()
@@ -20,6 +21,20 @@ export default function Navbar() {
   const notifRef  = useRef(null)
 
   useEffect(() => { setOpen(false) }, [location.pathname])
+
+  useEffect(() => {
+    if (open) {
+      document.documentElement.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.documentElement.style.overflow = ''
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.documentElement.style.overflow = ''
+      document.body.style.overflow = ''
+    }
+  }, [open])
 
   // Close on outside click
   useEffect(() => {
@@ -44,11 +59,7 @@ export default function Navbar() {
 
         {/* Brand */}
         <NavLink to="/" className={s.brand}>
-          <div className={s.logoMark}><span className={s.logoText}>SX</span></div>
-          <div className={s.brandName}>
-            <span className={s.brandTitle}>StudX</span>
-            <span className={s.brandSlogan}>Trade. Connect. Grow.</span>
-          </div>
+          <span className={s.brandText}>StudX</span>
         </NavLink>
 
         {/* Desktop nav */}
@@ -70,33 +81,27 @@ export default function Navbar() {
         {/* Right controls */}
         <div className={s.controls}>
 
-          {/* Theme toggle */}
-          <button className={s.iconBtn} onClick={toggle} title="Toggle theme">
-            {isDark ? '☀' : '◐'}
+          {/* Theme toggle — desktop only */}
+          <button className={`${s.iconBtn} ${s.desktopOnly}`} onClick={toggle} title="Toggle theme">
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
           </button>
 
           {currentUser ? (
             <>
-              {/* Cart */}
-              <Link to="/checkout" className={s.iconBtn} title="Cart">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                  <line x1="3" y1="6" x2="21" y2="6"/>
-                  <path d="M16 10a4 4 0 01-8 0"/>
-                </svg>
+              {/* Cart — desktop only */}
+              <Link to="/checkout" className={`${s.iconBtn} ${s.desktopOnly}`} title="Cart">
+                <ShoppingCart size={18} />
                 {count > 0 && <span className={s.badge}>{count}</span>}
               </Link>
 
-              {/* Notification bell */}
-              <div className={s.notifWrap} ref={notifRef}>
+              {/* Notification bell — desktop only */}
+              <div className={`${s.notifWrap} ${s.desktopOnly}`} ref={notifRef}>
                 <button
                   className={s.iconBtn}
                   onClick={() => setNotifOpen((o) => !o)}
                   title="Notifications"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
-                  </svg>
+                  <Bell size={18} />
                   {totalUnread > 0 && (
                     <span className={`${s.badge} ${s.badgePulse}`}>{totalUnread}</span>
                   )}
@@ -144,20 +149,22 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Profile avatar */}
-              <NavLink to={`/profile/${currentUser.uid}`} className={s.avatar}>
-                {currentUser.email?.[0]?.toUpperCase()}
+              {/* Profile avatar — desktop only */}
+              <NavLink to={`/profile/${currentUser.uid}`} className={`${s.avatar} ${s.desktopOnly}`}>
+                {extProfile?.avatarUrl
+                  ? <img src={extProfile.avatarUrl} alt="" className={s.avatarImg} />
+                  : currentUser.email?.[0]?.toUpperCase()}
               </NavLink>
 
               {/* Logout — desktop only */}
-              <button className={`${s.iconBtn} ${s.logoutBtn}`} onClick={handleLogout}>
-                ↪
+              <button className={`${s.iconBtn} ${s.logoutBtn} ${s.desktopOnly}`} onClick={handleLogout} title="Logout">
+                <LogOut size={16} />
               </button>
             </>
           ) : (
             <>
-              <NavLink to="/login"    className={s.link}>Login</NavLink>
-              <NavLink to="/register" className={s.ctaBtn}>Sign Up</NavLink>
+              <NavLink to="/login"    className={`${s.link} ${s.desktopOnly}`}>Login</NavLink>
+              <NavLink to="/register" className={`${s.ctaBtn} ${s.desktopOnly}`}>Sign Up</NavLink>
             </>
           )}
 
@@ -172,35 +179,73 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile panel */}
+      {/* Mobile drawer — full-screen overlay (only in DOM when open) */}
       {open && (
-        <nav className={s.mobileNav}>
-          <NavLink to="/" className={cls} end onClick={() => setOpen(false)}>Marketplace</NavLink>
-          {currentUser ? (
-            <>
-              <NavLink to="/messages"  className={cls} onClick={() => setOpen(false)}>
-                Messages {unreadChats > 0 && `(${unreadChats})`}
-              </NavLink>
-              <NavLink to="/wishlist"  className={cls} onClick={() => setOpen(false)}>Wishlist</NavLink>
-              <NavLink to="/dashboard" className={cls} onClick={() => setOpen(false)}>Dashboard</NavLink>
-              <NavLink to="/checkout"  className={cls} onClick={() => setOpen(false)}>
-                Cart {count > 0 && `(${count})`}
-              </NavLink>
-              {isAdmin && (
-                <NavLink to="/admin" className={cls} onClick={() => setOpen(false)}>Admin</NavLink>
+        <>
+          <div className={s.drawerOverlay} onClick={() => setOpen(false)} />
+          <nav className={`${s.mobileDrawer} ${s.mobileDrawerOpen}`}>
+            <div className={s.drawerHeader}>
+              <span className={s.drawerTitle}>Menu</span>
+              <button className={s.drawerClose} onClick={() => setOpen(false)} aria-label="Close menu">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className={s.drawerBody}>
+              <NavLink to="/" className={cls} end onClick={() => setOpen(false)}>Marketplace</NavLink>
+              {currentUser ? (
+                <>
+                  <NavLink to="/messages"  className={cls} onClick={() => setOpen(false)}>
+                    Messages {unreadChats > 0 && <span className={s.badge}>{unreadChats}</span>}
+                  </NavLink>
+                  <NavLink to="/wishlist"  className={cls} onClick={() => setOpen(false)}>Wishlist</NavLink>
+                  <NavLink to="/dashboard" className={cls} onClick={() => setOpen(false)}>Dashboard</NavLink>
+                  <NavLink to="/checkout"  className={cls} onClick={() => setOpen(false)}>
+                    Cart {count > 0 && <span className={s.badge}>{count}</span>}
+                  </NavLink>
+                  {isAdmin && (
+                    <NavLink to="/admin" className={cls} onClick={() => setOpen(false)}>Admin</NavLink>
+                  )}
+                </>
+              ) : (
+                <>
+                  <NavLink to="/login"    className={cls} onClick={() => setOpen(false)}>Login</NavLink>
+                  <NavLink to="/register" className={cls} onClick={() => setOpen(false)}>Sign Up</NavLink>
+                </>
               )}
-              <NavLink to={`/profile/${currentUser.uid}`} className={cls} onClick={() => setOpen(false)}>
-                Profile
-              </NavLink>
-              <button className={s.mobileLogout} onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <>
-              <NavLink to="/login"    className={cls} onClick={() => setOpen(false)}>Login</NavLink>
-              <NavLink to="/register" className={cls} onClick={() => setOpen(false)}>Sign Up</NavLink>
-            </>
-          )}
-        </nav>
+            </div>
+
+            <div className={s.drawerFooter}>
+              {currentUser ? (
+                <>
+                  <NavLink to={`/profile/${currentUser.uid}`} className={s.drawerProfile} onClick={() => setOpen(false)}>
+                    <div className={s.drawerAvatar}>
+                      {extProfile?.avatarUrl
+                        ? <img src={extProfile.avatarUrl} alt="" className={s.drawerAvatarImg} />
+                        : currentUser.email?.[0]?.toUpperCase()}
+                    </div>
+                    <div className={s.drawerUserInfo}>
+                      <span className={s.drawerName}>{extProfile?.displayName || 'User'}</span>
+                    </div>
+                  </NavLink>
+                  <button className={s.drawerLogoutBtn} onClick={() => { setOpen(false); handleLogout() }}>
+                    <LogOut size={16} /> Logout
+                  </button>
+                </>
+              ) : (
+                <div className={s.drawerAuth}>
+                  <NavLink to="/login" className={s.drawerLoginBtn} onClick={() => setOpen(false)}>Login</NavLink>
+                  <NavLink to="/register" className={s.drawerSignupBtn} onClick={() => setOpen(false)}>Sign Up</NavLink>
+                </div>
+              )}
+              <button className={s.drawerThemeBtn} onClick={toggle}>
+                {isDark ? <Sun size={16} /> : <Moon size={16} />} {isDark ? 'Light Mode' : 'Dark Mode'}
+              </button>
+            </div>
+          </nav>
+        </>
       )}
     </header>
   )

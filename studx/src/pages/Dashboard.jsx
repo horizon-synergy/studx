@@ -1,8 +1,9 @@
 // src/pages/Dashboard.jsx
 import { useState, useEffect, useRef } from 'react'
-import { Link }                        from 'react-router-dom'
+import { Link, useNavigate }           from 'react-router-dom'
 import { useAuth }                     from '../context/AuthContext'
 import { uploadImageToCloudinary }     from '../utils/cloudinary'
+import { Check, Package, Wrench, X, Image, Inbox, Star, ShoppingCart, AlertTriangle, Loader } from 'lucide-react'
 import CouponsTab                      from '../components/CouponsTab'
 import {
   createListing, getListingsBySeller, getListingById,
@@ -15,15 +16,41 @@ import s from '../styles/Dashboard.module.css'
 const TABS = ['Add Listing', 'My Listings', 'Orders', 'Coupons']
 
 export default function Dashboard() {
-  const { currentUser }           = useAuth()
+  const { currentUser, extProfile } = useAuth()
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('Add Listing')
+  const [namePromptDismissed, setNamePromptDismissed] = useState(false)
 
   return (
     <main className={s.page}>
       <div className={s.pageHeader}>
         <h1 className={s.pageTitle}>Dashboard</h1>
-        <p className={s.pageEmail}>{currentUser?.email}</p>
+        {currentUser?.email && (
+          <p className={s.pageEmail}>Welcome back</p>
+        )}
       </div>
+
+      {!extProfile?.displayName && !namePromptDismissed && (
+        <div className={s.card} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', background: '#fef9c3', borderColor: '#fde047' }}>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#854d0e', marginBottom: '0.2rem' }}>Set your display name</p>
+            <p style={{ fontSize: '0.78rem', color: '#a16207', lineHeight: 1.5 }}>Please add your name so others can recognise you on StudX.</p>
+          </div>
+          <button
+            onClick={() => navigate(`/profile/${currentUser?.uid}`)}
+            style={{ background: '#eab308', color: '#fff', border: 'none', padding: '0.45rem 1rem', borderRadius: 'var(--radius-md)', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            Go to Profile
+          </button>
+          <button
+            onClick={() => setNamePromptDismissed(true)}
+            style={{ background: 'transparent', border: 'none', color: '#a16207', cursor: 'pointer', padding: '0.25rem', lineHeight: 1 }}
+            title="Dismiss"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
 
       <div className={s.tabBar}>
         {TABS.map((tab) => (
@@ -118,7 +145,7 @@ function AddListingTab({ uid }) {
   return (
     <div className={s.card}>
       <h2 className={s.cardTitle}>New Listing</h2>
-      {success && <div className={s.successBanner}>✓ Listing published!</div>}
+      {success && <div className={s.successBanner}><Check size={14} /> Listing published!</div>}
       {error   && <div className={s.errorBanner}>{error}</div>}
 
       <form onSubmit={handleSubmit} className={s.form}>
@@ -137,7 +164,7 @@ function AddListingTab({ uid }) {
               <button key={c} type="button"
                 onClick={() => setCategory(c)}
                 className={`${s.catBtn} ${category === c ? s.catBtnActive : ''}`}>
-                {c === 'product' ? '📦 Product' : '🛠 Service'}
+                {c === 'product' ? <><Package size={14} /> Product</> : <><Wrench size={14} /> Service</>}
               </button>
             ))}
           </div>
@@ -195,7 +222,7 @@ function AddListingTab({ uid }) {
           {imagePreview ? (
             <div className={s.previewWrap}>
               <img src={imagePreview} alt="Preview" className={s.previewImg} />
-              <button type="button" onClick={removeImage} className={s.removeImg}>✕</button>
+              <button type="button" onClick={removeImage} className={s.removeImg}><X size={12} /></button>
               {submitting && (
                 <div className={s.uploadOverlay}>
                   <div className={s.progressBar}><div className={s.progressFill} style={{ width: `${progress}%` }} /></div>
@@ -205,7 +232,7 @@ function AddListingTab({ uid }) {
             </div>
           ) : (
             <label htmlFor="listing-img" className={s.dropZone}>
-              <span className={s.dropIcon}>🖼</span>
+              <span className={s.dropIcon}><Image size={24} /></span>
               <span className={s.dropLabel}>Click to upload</span>
               <span className={s.dropHint}>JPG, PNG, WEBP — max 5MB</span>
             </label>
@@ -308,7 +335,7 @@ function MyListingsTab({ uid }) {
       await updateListing(editListing.id, updates)
       setListings((prev) => prev.map((l) => l.id === editListing.id ? { ...l, ...updates } : l))
       closeEdit()
-    } catch (err) {
+    } catch (_) {
       setSaveError('Failed to save. Please try again.')
     } finally {
       setSaving(false); setUploadStatus('')
@@ -326,7 +353,7 @@ function MyListingsTab({ uid }) {
   }
 
   if (loading) return <Spinner />
-  if (!listings.length) return <Empty icon="📭" title="No listings yet" msg="Add your first listing above." />
+  if (!listings.length) return <Empty icon={Inbox} title="No listings yet" msg="Add your first listing above." />
 
   return (
     <>
@@ -345,7 +372,7 @@ function MyListingsTab({ uid }) {
                   {l.category}
                 </span>
                 {l.avgRating > 0 && (
-                  <span className={s.ratingPill}>★ {l.avgRating} ({l.reviewCount})</span>
+                  <span className={s.ratingPill}><Star size={10} fill="currentColor" /> {l.avgRating} ({l.reviewCount})</span>
                 )}
               </div>
               <div className={s.listingActions}>
@@ -365,7 +392,7 @@ function MyListingsTab({ uid }) {
           <div className={s.modal}>
             <div className={s.modalHeader}>
               <h2 className={s.modalTitle}>Edit Listing</h2>
-              <button onClick={closeEdit} className={s.modalClose}>✕</button>
+              <button onClick={closeEdit} className={s.modalClose}><X size={12} /></button>
             </div>
             <div className={s.modalBody}>
               {saveError && <div className={s.errorBanner}>{saveError}</div>}
@@ -393,7 +420,7 @@ function MyListingsTab({ uid }) {
                     <div key={idx} className={s.imgThumb}>
                       <img src={img.src} alt={`img ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       {idx === 0 && <span className={s.imgMain}>Main</span>}
-                      <button type="button" onClick={() => removeImg(idx)} className={s.imgRemove}>✕</button>
+                      <button type="button" onClick={() => removeImg(idx)} className={s.imgRemove}><X size={12} /></button>
                     </div>
                   ))}
                   {editImages.length < MAX_IMAGES && (
@@ -429,9 +456,9 @@ const ORDER_STATUS_LABELS = {
   accepted:       { label: 'Accepted',          color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
   fulfilled:      { label: 'Delivered',         color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
   confirmed:      { label: 'Receipt confirmed', color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0' },
-  completed:      { label: 'Completed ✓',       color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0' },
+  completed:      { label: 'Completed',         color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0' },
   declined:       { label: 'Declined',          color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
-  disputed:       { label: '⚠ Disputed',        color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+  disputed:       { label: 'Disputed',          color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
 }
 
 function StatusPill({ status }) {
@@ -507,7 +534,7 @@ function OrdersTab({ uid }) {
 
       {orders.length === 0 ? (
         <Empty
-          icon={tab === 'buying' ? '🛒' : '📦'}
+          icon={tab === 'buying' ? ShoppingCart : Package}
           title="No orders here"
           msg={tab === 'buying' ? 'Orders you place will appear here.' : 'Orders from buyers will appear here.'}
         />
@@ -572,7 +599,7 @@ function OrdersTab({ uid }) {
                       <button className={s.btnAccept}
                         disabled={acting === order.id}
                         onClick={() => act(acceptOrder, order.id, (o) => ({ ...o, status: 'accepted', sellerAccepted: true }))}>
-                        {acting === order.id ? '…' : '✓ Accept Order'}
+                          {acting === order.id ? <Loader size={14} /> : <><Check size={14} /> Accept Order</>}
                       </button>
                       <button className={s.btnDecline}
                         disabled={acting === order.id}
@@ -585,7 +612,7 @@ function OrdersTab({ uid }) {
                     <button className={s.btnFulfill}
                       disabled={acting === order.id}
                       onClick={() => act(fulfillOrder, order.id, (o) => ({ ...o, status: 'fulfilled', sellerConfirmed: true }))}>
-                      {acting === order.id ? '…' : '📦 Mark as Delivered'}
+                      {acting === order.id ? <Loader size={14} /> : <><Package size={14} /> Mark as Delivered</>}
                     </button>
                   )}
 
@@ -594,7 +621,7 @@ function OrdersTab({ uid }) {
                     <button className={s.btnConfirm}
                       disabled={acting === order.id}
                       onClick={() => act(confirmReceipt, order.id, (o) => ({ ...o, status: 'confirmed', buyerConfirmed: true }))}>
-                      {acting === order.id ? '…' : '✓ Confirm I Received It'}
+                      {acting === order.id ? <Loader size={14} /> : <><Check size={14} /> Confirm I Received It</>}
                     </button>
                   )}
 
@@ -606,22 +633,22 @@ function OrdersTab({ uid }) {
                         if (!window.confirm('Raise a dispute? Admin will review this order.')) return
                         act(raiseDispute, order.id, (o) => ({ ...o, status: 'disputed', disputedBy: uid }))
                       }}>
-                      ⚠ Dispute
+                      <AlertTriangle size={14} /> Dispute
                     </button>
                   )}
 
                   {/* Status messages */}
                   {isSeller && order.status === 'confirmed' && !order.paymentReleased && (
-                    <p className={s.orderNote}>✓ Buyer confirmed receipt. Payment pending admin release.</p>
+                    <p className={s.orderNote}><Check size={12} /> Buyer confirmed receipt. Payment pending admin release.</p>
                   )}
                   {order.status === 'completed' && (
-                    <p className={s.orderNote} style={{ color: 'var(--success-text)' }}>✓ Order complete. Payment released.</p>
+                    <p className={s.orderNote} style={{ color: 'var(--success-text)' }}><Check size={12} /> Order complete. Payment released.</p>
                   )}
                   {order.status === 'declined' && (
                     <p className={s.orderNote} style={{ color: 'var(--danger-text)' }}>This order was declined.</p>
                   )}
                   {order.status === 'disputed' && (
-                    <p className={s.orderNote} style={{ color: 'var(--danger-text)' }}>⚠ Dispute raised — admin reviewing.</p>
+                    <p className={s.orderNote} style={{ color: 'var(--danger-text)' }}><AlertTriangle size={12} /> Dispute raised — admin reviewing.</p>
                   )}
                 </div>
               </div>
@@ -642,10 +669,10 @@ function Spinner() {
   )
 }
 
-function Empty({ icon, title, msg }) {
+function Empty({ icon: Icon, title, msg }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '4rem 1rem', textAlign: 'center', gap: '0.5rem' }}>
-      <span style={{ fontSize: '2.5rem' }}>{icon}</span>
+      <span style={{ color: 'var(--text-muted)' }}>{Icon && <Icon size={40} />}</span>
       <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{title}</p>
       <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', maxWidth: '20rem' }}>{msg}</p>
     </div>

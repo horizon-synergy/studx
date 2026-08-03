@@ -52,8 +52,8 @@ export default function Messages() {
           otherUids.forEach(async (uid) => {
             if (names[uid]) return
             try {
-              const [auth, ext] = await Promise.all([getUserProfile(uid), getProfile(uid)])
-              const name = ext?.displayName || auth?.email?.split('@')[0] || 'User'
+              const [_, ext] = await Promise.all([getUserProfile(uid), getProfile(uid)])
+              const name = ext?.displayName || 'User'
               setNames((p) => ({ ...p, [uid]: name }))
             } catch (_) {}
           })

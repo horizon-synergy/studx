@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Link }                from 'react-router-dom'
 import { useAuth }             from '../context/AuthContext'
+import { Heart } from 'lucide-react'
 import { getWishlist, getListingById } from '../services/firebase'
 import ListingCard from '../components/ListingCard'
 
@@ -46,7 +47,7 @@ export default function Wishlist() {
 
       {listings.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '5rem 1rem', textAlign: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '3rem' }}>♡</span>
+          <span style={{ color: 'var(--text-muted)' }}><Heart size={48} /></span>
           <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Your wishlist is empty</p>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Browse the marketplace and save items you're interested in.</p>
           <Link to="/" style={{ marginTop: '0.5rem', background: 'var(--brand-blue)', color: '#fff', fontWeight: 600, fontSize: '0.875rem', padding: '0.65rem 1.5rem', borderRadius: 'var(--radius-lg)', textDecoration: 'none' }}>

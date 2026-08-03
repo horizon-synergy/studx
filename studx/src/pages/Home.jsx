@@ -2,13 +2,14 @@
 import { useState, useEffect, useMemo } from 'react'
 import ListingCard from '../components/ListingCard'
 import { getAllListings, getUserProfile, getProfile } from '../services/firebase'
+import { Star, Package, Wrench, Search, X, AlertTriangle } from 'lucide-react'
 import s from '../styles/Home.module.css'
 
 const FILTERS = [
-  { label: 'All',          value: 'all'      },
-  { label: '⭐ Featured',  value: 'featured'  },
-  { label: '📦 Products',  value: 'product'  },
-  { label: '🛠 Services',  value: 'service'  },
+  { label: 'All',          value: 'all',      icon: null },
+  { label: 'Featured',     value: 'featured', icon: Star },
+  { label: 'Products',     value: 'product',  icon: Package },
+  { label: 'Services',     value: 'service',  icon: Wrench },
 ]
 
 export default function Home() {
@@ -33,9 +34,8 @@ export default function Home() {
         const sellerMap = {}
         uniqueSellerIds.forEach((uid, i) => {
           const displayName = extProfiles[i]?.displayName
-          const email       = authProfiles[i]?.email || ''
           sellerMap[uid] = {
-            name:     displayName || email.split('@')[0] || 'Student',
+            name:     displayName || 'Student',
             verified: authProfiles[i]?.verified || false,
           }
         })
@@ -113,9 +113,7 @@ export default function Home() {
       <div className={s.searchRow}>
         <div className={s.searchWrap}>
           <span className={s.searchIcon}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-            </svg>
+            <Search size={14} />
           </span>
           <input
             type="text"
@@ -125,7 +123,7 @@ export default function Home() {
             className={s.searchInput}
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className={s.searchClear}>✕</button>
+            <button onClick={() => setSearchQuery('')} className={s.searchClear}><X size={12} /></button>
           )}
         </div>
       </div>
@@ -138,7 +136,7 @@ export default function Home() {
             onClick={() => setActiveFilter(f.value)}
             className={`${s.pill} ${activeFilter === f.value ? s.pillActive : ''}`}
           >
-            {f.label}
+            {f.icon && <f.icon size={12} />} {f.label}
           </button>
         ))}
       </div>
@@ -175,12 +173,12 @@ export default function Home() {
         <SkeletonGrid />
       ) : error ? (
         <div className={s.empty}>
-          <span className={s.emptyIcon}>⚠️</span>
+          <span className={s.emptyIcon}><AlertTriangle size={24} /></span>
           <p className={s.emptyTitle}>{error}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className={s.empty}>
-          <span className={s.emptyIcon}>🔍</span>
+          <span className={s.emptyIcon}><Search size={24} /></span>
           <p className={s.emptyTitle}>Nothing found</p>
           <p className={s.emptyDesc}>Try different keywords or clear your filters.</p>
           <button onClick={clearAll} className={s.emptyAction}>Clear filters</button>

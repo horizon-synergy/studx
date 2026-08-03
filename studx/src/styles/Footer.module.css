@@ -1,0 +1,230 @@
+/* src/styles/Footer.module.css */
+
+.footer {
+  margin-top: auto;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.inner {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .inner {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+/* ── Brand column ──────────────────────────────────────── */
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.brandLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.footerBrandName {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.tagline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 22rem;
+}
+
+/* ── Misc columns ──────────────────────────────────────── */
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.colTitle {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.colLink {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
+  transition: color var(--transition);
+}
+
+.colLink:hover {
+  color: var(--brand-blue);
+}
+
+.legalToggle {
+  width: 100%;
+}
+
+.chevron {
+  margin-left: auto;
+  transition: transform 0.2s var(--ease);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ── Policy panels ─────────────────────────────────────── */
+.panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s var(--ease);
+  border-top: 1px solid var(--border-color);
+}
+
+.panelOpen {
+  max-height: 2000px;
+}
+
+.panelInner {
+  max-width: 54rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.panelClose {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background var(--transition);
+}
+
+.panelClose:hover {
+  background: var(--bg-hover);
+}
+
+.panelContent {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ── Markdown rendering ────────────────────────────────── */
+.mdH {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.mdH:first-child {
+  margin-top: 0;
+}
+
+.mdP {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 0.35rem;
+}
+
+.mdP strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.mdSpacer {
+  height: 0.5rem;
+}
+
+/* ── Bottom bar ─────────────────────────────────────────── */
+.bottom {
+  border-top: 1px solid var(--border-color);
+  padding: 1rem 1.25rem;
+}
+
+.bottomInner {
+  max-width: 76rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+@media (min-width: 640px) {
+  .bottomInner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.bottomLinks {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.bottomLink {
+  background: none;
+  border: none;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: color var(--transition);
+}
+
+.bottomLink:hover {
+  color: var(--brand-blue);
+}

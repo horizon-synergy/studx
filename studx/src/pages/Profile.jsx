@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, Link }                       from 'react-router-dom'
 import { useAuth }                               from '../context/AuthContext'
 import { uploadImageToCloudinary }               from '../utils/cloudinary'
+import { Camera, Loader, BadgeCheck, Package, Wrench, Star, ArrowLeft, Check, Search, Inbox, GraduationCap, X } from 'lucide-react'
 import {
   getUserProfile, getProfile, upsertProfile,
   getListingsBySeller, getSellerRatingStats,
@@ -17,19 +18,16 @@ function VerifiedBadge() {
       padding: '0.2rem 0.55rem', borderRadius: 999,
       background: '#dcfce7', color: '#15803d', border: '1px solid #bbf7d0',
     }}>
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-        <path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-.497 3.51 3.745 3.745 0 01-3.318 1.319 3.745 3.745 0 01-3.592 0 3.745 3.745 0 01-3.318-1.319 3.745 3.745 0 01-.497-3.51A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 01.497-3.51 3.745 3.745 0 013.318-1.319 3.745 3.745 0 013.592 0 3.745 3.745 0 013.318 1.319c.865.283 1.515.9 1.88 1.677A3.745 3.745 0 0121 12z"
-          stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <BadgeCheck size={11} />
       Verified Seller
     </span>
   )
 }
 
 const LISTING_FILTERS = [
-  { label: 'All',         value: 'all'     },
-  { label: '📦 Products', value: 'product' },
-  { label: '🛠 Services', value: 'service' },
+  { label: 'All',         value: 'all',     icon: null },
+  { label: 'Products',    value: 'product', icon: Package },
+  { label: 'Services',    value: 'service', icon: Wrench },
 ]
 
 export default function Profile() {
@@ -53,9 +51,11 @@ export default function Profile() {
   const [university,      setUniversity]      = useState('')
   const [course,          setCourse]          = useState('')
   const [saving,          setSaving]          = useState(false)
+  const [namePromptDismissed, setNamePromptDismissed] = useState(false)
   const [saveMsg,         setSaveMsg]         = useState('')
   const [avatarUploading, setAvatarUploading] = useState(false)
   const [bannerUploading, setBannerUploading] = useState(false)
+  const [bannerError, setBannerError] = useState('')
 
   const avatarInputRef = useRef(null)
   const bannerInputRef = useRef(null)
@@ -71,7 +71,7 @@ export default function Profile() {
         ])
         setUserDoc(uDoc); setProfile(prof)
         setListings(lData); setStats(rData)
-        setDisplayName(prof?.displayName || uDoc?.email?.split('@')[0] || '')
+        setDisplayName(prof?.displayName || '')
         setBio(prof?.bio || '')
         setUniversity(prof?.university || '')
         setCourse(prof?.course || '')
@@ -115,17 +115,23 @@ export default function Profile() {
 
   const handleBannerUpload = async (e) => {
     const file = e.target.files?.[0]
-    if (!file || !file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) return
+    if (!file) return
+    if (!file.type.startsWith('image/')) { setBannerError('Please select an image file.'); return }
+    if (file.size > 5 * 1024 * 1024) { setBannerError('Image must be under 5MB.'); return }
+    setBannerError('')
     setBannerUploading(true)
     try {
       const url = await uploadImageToCloudinary(file)
       await upsertProfile(uid, { bannerUrl: url })
       setProfile((p) => ({ ...p, bannerUrl: url }))
-    } catch (err) { console.error(err) }
+    } catch (err) {
+      console.error(err)
+      setBannerError('Upload failed. Please try again.')
+    }
     finally { setBannerUploading(false); if (bannerInputRef.current) bannerInputRef.current.value = '' }
   }
 
-  const starsDisplay = (n) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n))
+  const starsDisplay = (n) => Array.from({length: 5}, (_, i) => <Star key={i} size={10} fill={i < Math.round(n) ? '#f59e0b' : 'none'} color="#f59e0b" />)
 
   const inputStyle = {
     width: '100%', padding: '0.6rem 0.875rem', fontSize: '0.875rem',
@@ -147,7 +153,7 @@ export default function Profile() {
     <main style={page}>
       <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
         <p style={{ color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '1rem' }}>{fetchError}</p>
-        <Link to="/" style={{ color: 'var(--brand-blue)', fontSize: '0.875rem' }}>← Back to Marketplace</Link>
+        <Link to="/" style={{ color: 'var(--brand-blue)', fontSize: '0.875rem' }}><ArrowLeft size={12} /> Back to Marketplace</Link>
       </div>
     </main>
   )
@@ -156,12 +162,12 @@ export default function Profile() {
     <main style={page}>
       <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
         <p style={{ color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '1rem' }}>User not found.</p>
-        <Link to="/" style={{ color: 'var(--brand-blue)', fontSize: '0.875rem' }}>← Back</Link>
+        <Link to="/" style={{ color: 'var(--brand-blue)', fontSize: '0.875rem' }}><ArrowLeft size={12} /> Back</Link>
       </div>
     </main>
   )
 
-  const name = profile?.displayName || userDoc.email?.split('@')[0] || 'Student'
+  const name = profile?.displayName || 'Student'
 
   return (
     <main style={page}>
@@ -185,15 +191,20 @@ export default function Profile() {
           }
           {isOwner && (
             <div
-              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0)', transition: 'background 0.18s', fontSize: '0.78rem', fontWeight: 600, color: '#fff' }}
+              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0)', transition: 'background 0.18s', fontSize: '0.78rem', fontWeight: 600, color: '#fff', pointerEvents: 'none' }}
               onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.38)'}
               onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0)'}
             >
-              {bannerUploading ? '⏳ Uploading…' : profile?.bannerUrl ? '📷  Change banner' : '📷  Add banner'}
+              {bannerUploading ? <><Loader size={14} style={{ animation: 'spin 0.7s linear infinite' }} /> Uploading…</> : <><Camera size={14} /> {profile?.bannerUrl ? 'Change banner' : 'Add banner'}</>}
             </div>
           )}
           <input ref={bannerInputRef} type="file" accept="image/*" onChange={handleBannerUpload} style={{ display: 'none' }} />
         </div>
+        {bannerError && (
+          <p style={{ fontSize: '0.78rem', color: '#dc2626', marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            {bannerError}
+          </p>
+        )}
 
         {/* Avatar */}
         <div style={{ position: 'absolute', bottom: '-2.75rem', left: '1.25rem' }}>
@@ -221,14 +232,14 @@ export default function Profile() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.42)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0)'}
                 >
-                  {avatarUploading ? '⏳' : '📷'}
+                  {avatarUploading ? <Loader size={16} style={{ animation: 'spin 0.7s linear infinite' }} /> : <Camera size={16} />}
                 </div>
               )}
             </div>
             <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: 'none' }} />
             {userDoc.verified && (
               <div style={{ position: 'absolute', bottom: '1px', right: '1px', width: '1.35rem', height: '1.35rem', background: '#22c55e', borderRadius: '50%', border: '2px solid var(--bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <Check size={10} color="#fff" />
               </div>
             )}
           </div>
@@ -259,10 +270,12 @@ export default function Profile() {
           </h1>
           {userDoc.verified && <VerifiedBadge />}
         </div>
-        <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>{userDoc.email}</p>
+        {profile?.displayName && (
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>@{profile.displayName.replace(/\s+/g, '').toLowerCase()}</p>
+        )}
         {(profile?.university || profile?.course) && (
           <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-            🎓 {[profile.university, profile.course].filter(Boolean).join(' · ')}
+            <GraduationCap size={12} /> {[profile.university, profile.course].filter(Boolean).join(' · ')}
           </p>
         )}
       </div>
@@ -278,7 +291,7 @@ export default function Profile() {
           { value: listings.length,                  label: 'Listings' },
           { value: stats.avg > 0 ? stats.avg : '—',  label: 'Avg Rating', stars: stats.avg > 0 },
           { value: stats.total,                       label: 'Reviews' },
-          { value: userDoc.verified ? '✓' : '—',     label: 'Verified', green: userDoc.verified },
+          { value: userDoc.verified ? <Check size={14} /> : '—',     label: 'Verified', green: userDoc.verified },
         ].map((stat, i) => (
           <div key={i} style={{ padding: '1rem 0.5rem', textAlign: 'center', borderRight: i < 3 ? '1px solid var(--border-color)' : 'none' }}>
             <p style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.1rem,3vw,1.5rem)', fontWeight: 700, color: stat.green ? '#15803d' : 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1 }}>
@@ -289,6 +302,29 @@ export default function Profile() {
           </div>
         ))}
       </div>
+
+      {/* Name prompt banner */}
+      {isOwner && !profile?.displayName && !namePromptDismissed && (
+        <div style={{ ...card, background: '#fef9c3', borderColor: '#fde047', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#854d0e', marginBottom: '0.2rem' }}>Set your display name</p>
+            <p style={{ fontSize: '0.78rem', color: '#a16207', lineHeight: 1.5 }}>Please add your name so others can recognise you on StudX. Edit your profile below.</p>
+          </div>
+          <button
+            onClick={() => { setEditing(true); setNamePromptDismissed(true) }}
+            style={{ background: '#eab308', color: '#fff', border: 'none', padding: '0.45rem 1rem', borderRadius: 'var(--radius-md)', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            Edit Profile
+          </button>
+          <button
+            onClick={() => setNamePromptDismissed(true)}
+            style={{ background: 'transparent', border: 'none', color: '#a16207', cursor: 'pointer', padding: '0.25rem', lineHeight: 1 }}
+            title="Dismiss"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
 
       {/* Edit form */}
       {editing && isOwner && (
@@ -321,7 +357,7 @@ export default function Profile() {
                 style={{ background: 'transparent', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.875rem', fontFamily: 'var(--font-body)', padding: '0.65rem 1.25rem', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', cursor: 'pointer' }}>
                 Cancel
               </button>
-              {saveMsg && <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 500 }}>✓ {saveMsg}</span>}
+              {saveMsg && <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 500 }}><Check size={12} /> {saveMsg}</span>}
             </div>
           </form>
         </div>
@@ -347,7 +383,7 @@ export default function Profile() {
         {listings.length > 0 && (
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <div style={{ position: 'relative', flex: 1, minWidth: '10rem' }}>
-              <span style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.72rem', color: 'var(--text-muted)', pointerEvents: 'none' }}>🔍</span>
+              <span style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.72rem', color: 'var(--text-muted)', pointerEvents: 'none' }}><Search size={12} /></span>
               <input
                 value={listingSearch} onChange={(e) => setListingSearch(e.target.value)}
                 placeholder="Search listings…"
@@ -365,7 +401,7 @@ export default function Profile() {
                   color: listingFilter === f.value ? '#fff' : 'var(--text-secondary)',
                   cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 150ms',
                 }}>
-                {f.label}
+                {f.icon && <f.icon size={12} />} {f.label}
               </button>
             ))}
           </div>
@@ -374,9 +410,9 @@ export default function Profile() {
         {filteredListings.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)' }}>
             {listings.length === 0 ? (
-              <><div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📭</div><p style={{ fontWeight: 500 }}>No listings yet.</p></>
+              <><div style={{ marginBottom: '0.5rem', color: 'var(--text-muted)' }}><Inbox size={32} /></div><p style={{ fontWeight: 500 }}>No listings yet.</p></>
             ) : (
-              <><div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🔍</div><p>No listings match your filter.</p></>
+              <><div style={{ marginBottom: '0.5rem', color: 'var(--text-muted)' }}><Search size={24} /></div><p>No listings match your filter.</p></>
             )}
           </div>
         ) : (

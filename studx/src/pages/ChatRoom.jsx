@@ -2,10 +2,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, Link }   from 'react-router-dom'
 import { useAuth }           from '../context/AuthContext'
+import { ArrowLeft, ArrowRight, Clock, Send } from 'lucide-react'
 import {
   subscribeToMessages, sendMessage,
   getDoc, doc, db,
   getUserProfile, getProfile,
+  createNotification,
 } from '../services/firebase'
 import s from '../styles/Chat.module.css'
 
@@ -56,8 +58,8 @@ export default function ChatRoom() {
       setChat(data)
       const otherUid = data.participants.find((u) => u !== currentUser.uid)
       if (otherUid) {
-        const [auth, ext] = await Promise.all([getUserProfile(otherUid), getProfile(otherUid)])
-        setOtherName(ext?.displayName || auth?.email?.split('@')[0] || 'User')
+        const [_, ext] = await Promise.all([getUserProfile(otherUid), getProfile(otherUid)])
+        setOtherName(ext?.displayName || 'User')
       }
       setLoading(false)
     }
@@ -80,6 +82,18 @@ export default function ChatRoom() {
     setSending(true)
     try {
       await sendMessage(chatId, currentUser.uid, payload)
+      if (chat) {
+        const otherUid = chat.participants.find((u) => u !== currentUser.uid)
+        if (otherUid && !chat.isAdminChat) {
+          createNotification(otherUid, {
+            type: 'new_message',
+            title: 'New message',
+            body: `${otherName}: ${payload.slice(0, 100)}${payload.length > 100 ? '…' : ''}`,
+            chatId,
+            read: false,
+          }).catch(() => {})
+        }
+      }
     } catch (err) {
       console.error(err)
       setText(payload)
@@ -87,7 +101,7 @@ export default function ChatRoom() {
       setSending(false)
       inputRef.current?.focus()
     }
-  }, [text, sending, chatId, currentUser?.uid])
+  }, [text, sending, chatId, currentUser?.uid, chat, otherName])
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() }
@@ -125,7 +139,7 @@ export default function ChatRoom() {
   return (
     <div className={s.chatPage}>
       <div className={s.chatHeader}>
-        <Link to="/messages" className={s.chatHeaderBack}>←</Link>
+        <Link to="/messages" className={s.chatHeaderBack}><ArrowLeft size={16} /></Link>
         <div className={s.chatHeaderAvatar}>{otherName[0]?.toUpperCase()}</div>
         <div className={s.chatHeaderInfo}>
           <p className={s.chatHeaderName}>{otherName}</p>
@@ -134,7 +148,7 @@ export default function ChatRoom() {
               <>
                 Re: {chat.listingTitle || 'Listing'} ·{' '}
                 <Link to={`/listing/${chat.listingId}`} style={{ color: 'var(--brand-blue)', textDecoration: 'none', fontSize: '0.65rem' }}>
-                  View →
+                  View <ArrowRight size={10} />
                 </Link>
               </>
             ) : chat.listingTitle || 'Direct message'}
@@ -174,7 +188,7 @@ export default function ChatRoom() {
       </div>
 
       {isExpired ? (
-        <div className={s.expiredBanner}>🕐 This chat has expired.</div>
+        <div className={s.expiredBanner}><Clock size={14} /> This chat has expired.</div>
       ) : (
         <div className={s.inputArea}>
           <textarea
@@ -193,10 +207,7 @@ export default function ChatRoom() {
             className={s.sendBtn}
             aria-label="Send"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"
-                stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <Send size={16} color="#fff" />
           </button>
         </div>
       )}
