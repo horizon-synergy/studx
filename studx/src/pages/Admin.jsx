@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate }                  from 'react-router-dom'
 import { useAuth }                      from '../context/AuthContext'
+import { AlertTriangle, ArrowRight, CreditCard, Check, Circle, Star, MessageSquare, ChevronDown, Search, X } from 'lucide-react'
 import {
   getAllListings, getAllUsers, getAllOrders, getAllChats,
   deleteListing, setListingFeatured,
@@ -114,7 +115,7 @@ export default function Admin() {
 
   const handleMessageUser = async (user) => {
     try {
-      const chat = await getOrCreateDirectChat(currentUser.uid, user.uid, user.email)
+      const chat = await getOrCreateDirectChat(currentUser.uid, user.uid, user.uid)
       navigate(`/messages/${chat.id}`)
     } catch (err) { console.error(err) }
   }
@@ -188,7 +189,7 @@ export default function Admin() {
         <div className={s.alertRow}>
           {disputedOrders.length > 0 && (
             <div className={s.alertCard} style={{ borderColor: '#fecaca' }}>
-              <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+              <AlertTriangle size={20} color="#dc2626" />
               <div>
                 <p style={{ fontWeight: 600, color: '#dc2626', fontSize: '0.875rem' }}>
                   {disputedOrders.length} Disputed Order{disputedOrders.length > 1 ? 's' : ''}
@@ -196,13 +197,13 @@ export default function Admin() {
                 <p style={{ fontSize: '0.72rem', color: '#dc2626' }}>Require your attention</p>
               </div>
               <button className={s.alertBtn} onClick={() => { setOpenSection('orders'); setOrderFilter('disputed') }}>
-                View →
+                View <ArrowRight size={12} />
               </button>
             </div>
           )}
           {pendingPayment.length > 0 && (
             <div className={s.alertCard} style={{ borderColor: '#bbf7d0' }}>
-              <span style={{ fontSize: '1.25rem' }}>💳</span>
+              <CreditCard size={20} color="#15803d" />
               <div>
                 <p style={{ fontWeight: 600, color: '#15803d', fontSize: '0.875rem' }}>
                   {pendingPayment.length} Payment{pendingPayment.length > 1 ? 's' : ''} to Release
@@ -210,7 +211,7 @@ export default function Admin() {
                 <p style={{ fontSize: '0.72rem', color: '#15803d' }}>Buyer confirmed receipt</p>
               </div>
               <button className={s.alertBtn} onClick={() => { setOpenSection('orders'); setOrderFilter('confirmed') }}>
-                View →
+                View <ArrowRight size={12} />
               </button>
             </div>
           )}
@@ -263,22 +264,22 @@ export default function Admin() {
                   <td>
                     <span className={s.mono}>{order.buyerId?.slice(0, 8)}…</span>
                     <br />
-                    <span className={s.mono}>→ {order.sellerId?.slice(0, 8)}…</span>
+                    <span className={s.mono}><ArrowRight size={10} /> {order.sellerId?.slice(0, 8)}…</span>
                   </td>
                   <td>
                     <StatusPill status={order.status} />
                     {order.paymentReleased && (
                       <div style={{ marginTop: '0.25rem' }}>
-                        <span style={{ fontSize: '0.6rem', color: '#15803d', fontWeight: 600 }}>💳 Paid</span>
+                        <span style={{ fontSize: '0.6rem', color: '#15803d', fontWeight: 600 }}><CreditCard size={10} /> Paid</span>
                       </div>
                     )}
                   </td>
                   <td>
                     <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', lineHeight: 1.8 }}>
-                      <div>{order.sellerAccepted  ? '✓' : '○'} Seller accepted</div>
-                      <div>{order.sellerConfirmed ? '✓' : '○'} Seller fulfilled</div>
-                      <div>{order.buyerConfirmed  ? '✓' : '○'} Buyer confirmed</div>
-                      <div>{order.paymentReleased ? '✓' : '○'} Payment released</div>
+                      <div>{order.sellerAccepted  ? <Check size={10} /> : <Circle size={10} />} Seller accepted</div>
+                      <div>{order.sellerConfirmed ? <Check size={10} /> : <Circle size={10} />} Seller fulfilled</div>
+                      <div>{order.buyerConfirmed  ? <Check size={10} /> : <Circle size={10} />} Buyer confirmed</div>
+                      <div>{order.paymentReleased ? <Check size={10} /> : <Circle size={10} />} Payment released</div>
                     </div>
                   </td>
                   <td>
@@ -290,7 +291,7 @@ export default function Admin() {
                           disabled={acting === order.id}
                           onClick={() => handleReleasePayment(order.id)}
                         >
-                          {acting === order.id ? '…' : '💳 Release Payment'}
+                          {acting === order.id ? '…' : <><CreditCard size={12} /> Release Payment</>}
                         </button>
                       )}
                       {/* Status override */}
@@ -344,12 +345,12 @@ export default function Admin() {
                   <td><span className={s.cellPrice}>R{Number(l.price).toFixed(2)}</span></td>
                   <td>
                     {l.avgRating > 0
-                      ? <span style={{ fontSize: '0.75rem' }}>★ {l.avgRating} ({l.reviewCount})</span>
+                      ? <span style={{ fontSize: '0.75rem' }}><Star size={10} fill="currentColor" /> {l.avgRating} ({l.reviewCount})</span>
                       : <span className={s.cellMuted}>—</span>}
                   </td>
                   <td>
                     {l.featured
-                      ? <span className={s.verifiedBadge}>⭐ Featured</span>
+                      ? <span className={s.verifiedBadge}><Star size={10} fill="currentColor" /> Featured</span>
                       : <span className={s.unverifiedBadge}>—</span>}
                   </td>
                   <td>
@@ -360,7 +361,7 @@ export default function Admin() {
                         className={l.featured ? s.btnUnverify : s.btnVerify}
                         style={{ fontSize: '0.7rem' }}
                       >
-                        {acting === l.id ? '…' : l.featured ? '☆ Unfeature' : '⭐ Feature'}
+                        {acting === l.id ? '…' : l.featured ? <><Star size={10} /> Unfeature</> : <><Star size={10} fill="currentColor" /> Feature</>}
                       </button>
                       <button
                         onClick={() => handleDeleteListing(l.id)}
@@ -387,7 +388,7 @@ export default function Admin() {
         <div className={s.tableWrap}>
           <table className={s.table}>
             <thead><tr>
-              <th>Email</th><th>Role</th><th>Verified</th><th>Actions</th>
+              <th>User</th><th>Role</th><th>Verified</th><th>Actions</th>
             </tr></thead>
             <tbody>
               {filteredUsers.length === 0
@@ -395,8 +396,7 @@ export default function Admin() {
                 : filteredUsers.map((user) => (
                 <tr key={user.uid}>
                   <td>
-                    <span className={s.cellTitle}>{user.email}</span>
-                    <br /><span className={s.mono}>{user.uid?.slice(0, 12)}…</span>
+                    <span className={s.cellTitle}>{user.uid?.slice(0, 12)}…</span>
                   </td>
                   <td>
                     {user.role === 'admin'
@@ -405,7 +405,7 @@ export default function Admin() {
                   </td>
                   <td>
                     {user.verified
-                      ? <span className={s.verifiedBadge}>✓ Verified</span>
+                      ? <span className={s.verifiedBadge}><Check size={10} /> Verified</span>
                       : <span className={s.unverifiedBadge}>—</span>}
                   </td>
                   <td>
@@ -430,7 +430,7 @@ export default function Admin() {
                         onClick={() => handleMessageUser(user)}
                         className={s.btnEdit}
                       >
-                        💬 Message
+                        <MessageSquare size={12} /> Message
                       </button>
                     </div>
                   </td>
@@ -473,7 +473,7 @@ export default function Admin() {
                       <td>
                         {exp ? (
                           <span style={{ fontSize: '0.72rem', fontWeight: 600, color: expired ? '#dc2626' : daysLeft <= 3 ? '#d97706' : 'var(--text-muted)' }}>
-                            {expired ? '⚠ Expired' : `${daysLeft}d`}
+                            {expired ? <><AlertTriangle size={10} /> Expired</> : `${daysLeft}d`}
                           </span>
                         ) : '—'}
                       </td>
@@ -509,7 +509,7 @@ export default function Admin() {
               style={{ background: 'var(--brand-blue)', color: '#fff', fontWeight: 600, fontSize: '0.825rem', fontFamily: 'var(--font-body)', padding: '0.45rem 1.25rem', border: 'none', borderRadius: 'var(--radius-md)', cursor: ttlSaving ? 'not-allowed' : 'pointer', opacity: ttlSaving ? 0.6 : 1 }}>
               {ttlSaving ? 'Saving…' : 'Save'}
             </button>
-            {ttlSaved && <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 500 }}>✓ Saved</span>}
+            {ttlSaved && <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 500 }}><Check size={12} /> Saved</span>}
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {[7, 14, 30, 90].map((d) => (
@@ -543,7 +543,7 @@ function Section({ id, open, toggle, title, count, total, children }) {
             </span>
           )}
         </div>
-        <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', transition: 'transform 150ms', transform: isOpen ? 'rotate(180deg)' : 'none' }}>▼</span>
+        <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', transition: 'transform 150ms', transform: isOpen ? 'rotate(180deg)' : 'none' }}><ChevronDown size={12} /></span>
       </button>
       {isOpen && <div style={{ padding: '1.1rem 1.25rem' }}>{children}</div>}
     </div>
@@ -553,7 +553,7 @@ function Section({ id, open, toggle, title, count, total, children }) {
 function SearchBar({ value, onChange, placeholder }) {
   return (
     <div style={{ position: 'relative', marginBottom: '1rem' }}>
-      <span style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '0.75rem', pointerEvents: 'none' }}>🔍</span>
+      <span style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '0.75rem', pointerEvents: 'none' }}><Search size={12} /></span>
       <input
         type="text" value={value} onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
@@ -562,7 +562,7 @@ function SearchBar({ value, onChange, placeholder }) {
       {value && (
         <button onClick={() => onChange('')}
           style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.7rem' }}>
-          ✕
+          <X size={12} />
         </button>
       )}
     </div>

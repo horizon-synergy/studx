@@ -1,5 +1,6 @@
 // src/components/CouponsTab.jsx
 import { useState, useEffect } from 'react'
+import { Tag } from 'lucide-react'
 import {
   createCoupon, getCouponsBySeller,
   toggleCoupon, deleteCoupon,
@@ -44,7 +45,7 @@ export default function CouponsTab({ uid }) {
       setCode(''); setDiscount('')
       setSuccess(`Coupon "${cleanCode}" created!`)
       setTimeout(() => setSuccess(''), 4000)
-    } catch (err) { setError('Failed to create coupon.') }
+    } catch (_) { setError('Failed to create coupon.') }
     finally { setCreating(false) }
   }
 
@@ -132,7 +133,7 @@ export default function CouponsTab({ uid }) {
         <h2 className={s.cardTitle}>My Coupons ({coupons.length})</h2>
         {coupons.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏷</div>
+            <div style={{ marginBottom: '0.5rem', color: 'var(--text-muted)' }}><Tag size={32} /></div>
             <p>No coupons yet. Create one above.</p>
           </div>
         ) : (

@@ -86,6 +86,36 @@
 .emptyTitle { font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; }
 .emptyDesc  { font-size: 0.875rem; color: var(--text-muted); max-width: 22rem; }
 
+/* Error */
+.inboxError {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.75rem; padding: 2.5rem 1rem; text-align: center;
+  background: var(--danger-bg); border: 1px solid var(--danger-border);
+  border-radius: var(--radius-xl);
+}
+.inboxErrorTitle { font-weight: 600; color: var(--danger-text); }
+.inboxErrorMsg {
+  font-size: 0.8rem; color: var(--text-muted);
+  max-width: 30rem; word-break: break-word;
+}
+.inboxErrorActions {
+  display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center;
+}
+.retryBtn {
+  padding: 0.5rem 1rem; border: none; border-radius: 999px; cursor: pointer;
+  background: var(--brand-blue); color: #fff;
+  font-size: 0.8rem; font-weight: 600;
+  transition: opacity var(--transition);
+}
+.retryBtn:hover { opacity: 0.9; }
+.indexLink {
+  padding: 0.5rem 1rem; border-radius: 999px;
+  background: transparent; color: var(--brand-blue);
+  border: 1px solid var(--brand-blue);
+  font-size: 0.8rem; font-weight: 600; text-decoration: none;
+}
+.indexLink:hover { background: var(--brand-blue); color: #fff; }
+
 /* ════════════════════════════════════════════════════════
    CHAT ROOM  /messages/:chatId
 ════════════════════════════════════════════════════════ */

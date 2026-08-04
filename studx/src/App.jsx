@@ -2,6 +2,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar         from './components/Navbar'
+import Footer         from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute     from './components/AdminRoute'
 
@@ -37,35 +38,40 @@ function PageSpinner() {
 export default function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Navbar />
-      <Suspense fallback={<PageSpinner />}>
-        <Routes>
-          {/* Public */}
-          <Route path="/"              element={<Home />} />
-          <Route path="/listing/:id"   element={<ListingDetail />} />
-          <Route path="/login"         element={<Login />} />
-          <Route path="/register"      element={<Register />} />
-          <Route path="/profile/:uid"  element={<Profile />} />
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', overflowX: 'hidden' }}>
+        <Navbar />
+        <main style={{ flex: 1 }}>
+          <Suspense fallback={<PageSpinner />}>
+            <Routes>
+              {/* Public */}
+              <Route path="/"              element={<Home />} />
+              <Route path="/listing/:id"   element={<ListingDetail />} />
+              <Route path="/login"         element={<Login />} />
+              <Route path="/register"      element={<Register />} />
+              <Route path="/profile/:uid"  element={<Profile />} />
 
-          {/* Protected — logged-in users */}
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/checkout"  element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/wishlist"  element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-          <Route path="/messages"      element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-          <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
+              {/* Protected — logged-in users */}
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/checkout"  element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+              <Route path="/wishlist"  element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+              <Route path="/messages"      element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
 
-          {/* Admin only */}
-          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+              {/* Admin only */}
+              <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
 
-          {/* 404 */}
-          <Route path="*" element={
-            <div style={{ textAlign: 'center', padding: '6rem 1rem' }}>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '5rem', fontWeight: 800, color: 'var(--border-color)', letterSpacing: '-0.05em' }}>404</h1>
-              <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>This page doesn't exist.</p>
-            </div>
-          } />
-        </Routes>
-      </Suspense>
+              {/* 404 */}
+              <Route path="*" element={
+                <div style={{ textAlign: 'center', padding: '6rem 1rem' }}>
+                  <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '5rem', fontWeight: 800, color: 'var(--border-color)', letterSpacing: '-0.05em' }}>404</h1>
+                  <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>This page doesn't exist.</p>
+                </div>
+              } />
+            </Routes>
+          </Suspense>
+        </main>
+        <Footer />
+      </div>
     </BrowserRouter>
   )
 }

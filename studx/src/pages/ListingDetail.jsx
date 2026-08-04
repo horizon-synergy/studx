@@ -1,9 +1,10 @@
 // src/pages/ListingDetail.jsx
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { getCloudinaryThumbnail } from '../utils/cloudinary'
+import { Star, Package, Wrench, Check, MessageSquare, Pencil, ArrowLeft, ArrowRight, FrownIcon, Heart } from 'lucide-react'
 import {
   getListingById, getUserProfile, getProfile,
   createOrder,
@@ -34,7 +35,7 @@ function StarPicker({ value, onChange }) {
             onMouseLeave={() => setHover(0)}
             aria-label={`${n} star${n > 1 ? 's' : ''}`}
           >
-            <span className={(hover || value) >= n ? s.starFilled : s.starEmpty}>★</span>
+            <span className={(hover || value) >= n ? s.starFilled : s.starEmpty}><Star size={18} /></span>
           </button>
         ))}
         {(hover || value) > 0 && (
@@ -52,7 +53,7 @@ export default function ListingDetail() {
   const navigate        = useNavigate()
 
   const [listing,    setListing]    = useState(null)
-  const [seller,     setSeller]     = useState(null)
+  const [_,        setSeller]    = useState(null)
   const [sellerExt,  setSellerExt]  = useState(null)
   const [loading,    setLoading]    = useState(true)
   const [error,      setError]      = useState('')
@@ -75,11 +76,13 @@ export default function ListingDetail() {
   const [reviewBody,     setReviewBody]     = useState('')
   const [reviewError,    setReviewError]    = useState('')
   const [reviewLoading,  setReviewLoading]  = useState(false)
+  const [reviewAuthors,  setReviewAuthors]  = useState({})
 
   // Comments
   const [comments,       setComments]       = useState([])
   const [commentBody,    setCommentBody]    = useState('')
   const [commentLoading, setCommentLoading] = useState(false)
+  const [commentAuthors, setCommentAuthors] = useState({})
 
   // Tab
   const [tab, setTab] = useState('reviews')
@@ -98,6 +101,22 @@ export default function ListingDetail() {
         ])
         setSeller(s_); setSellerExt(se)
         setReviews(r); setComments(c)
+
+        // Fetch display names for review/comment authors
+        const allAuthorIds = [...new Set([
+          ...r.map((rev) => rev.authorId),
+          ...c.map((com) => com.authorId),
+        ].filter(Boolean))]
+        const authorMap = {}
+        await Promise.all(allAuthorIds.map(async (uid) => {
+          try {
+            const [_, p] = await Promise.all([getUserProfile(uid), getProfile(uid)])
+            authorMap[uid] = p?.displayName || 'User'
+          } catch (_) { authorMap[uid] = 'User' }
+        }))
+        setReviewAuthors(authorMap)
+        setCommentAuthors(authorMap)
+
         if (currentUser) {
           const ids = await getWishlist(currentUser.uid)
           setWishlisted(ids.includes(id))
@@ -219,21 +238,21 @@ export default function ListingDetail() {
   if (error || !listing) return (
     <main className={s.page}>
       <div className={s.notFound}>
-        <span className={s.notFoundIcon}>😕</span>
+        <span className={s.notFoundIcon}><FrownIcon size={32} /></span>
         <p className={s.notFoundTitle}>{error || 'Listing not found.'}</p>
-        <Link to="/" className={s.notFoundLink}>← Back to Marketplace</Link>
+        <Link to="/" className={s.notFoundLink}><ArrowLeft size={12} /> Back to Marketplace</Link>
       </div>
     </main>
   )
 
   const images   = listing.images?.length ? listing.images : [listing.imageUrl].filter(Boolean)
-  const sellerName = sellerExt?.displayName || seller?.email?.split('@')[0] || 'Unknown'
+  const sellerName = sellerExt?.displayName || 'Seller'
   const avgRating  = listing.avgRating || 0
   const reviewCount = listing.reviewCount || 0
 
   return (
     <main className={s.page}>
-      <Link to="/" className={s.breadcrumb}>← Marketplace</Link>
+      <Link to="/" className={s.breadcrumb}><ArrowLeft size={12} /> Marketplace</Link>
 
       <div className={s.grid}>
         {/* ── Images ── */}
@@ -244,7 +263,7 @@ export default function ListingDetail() {
               alt={listing.title}
               className={s.image}
             />
-            {listing.featured && <span className={s.featuredBadge}>⭐ Featured</span>}
+            {listing.featured && <span className={s.featuredBadge}><Star size={12} fill="currentColor" /> Featured</span>}
           </div>
           {images.length > 1 && (
             <div className={s.imageThumbs}>
@@ -264,7 +283,7 @@ export default function ListingDetail() {
         {/* ── Details ── */}
         <div className={s.details}>
           <span className={`${s.categoryBadge} ${listing.category === 'product' ? s.categoryProduct : s.categoryService}`}>
-            {listing.category === 'product' ? '📦 Product' : '🛠 Service'}
+            {listing.category === 'product' ? <><Package size={12} /> Product</> : <><Wrench size={12} /> Service</>}
           </span>
 
           <h1 className={s.title}>{listing.title}</h1>
@@ -280,7 +299,7 @@ export default function ListingDetail() {
           {avgRating > 0 && (
             <div className={s.avgRating}>
               <span className={s.avgRatingScore}>{avgRating}</span>
-              <span className={s.avgRatingStars}>{'★'.repeat(Math.round(avgRating))}{'☆'.repeat(5 - Math.round(avgRating))}</span>
+              <span className={s.avgRatingStars}>{Array.from({length: 5}, (_, i) => <Star key={i} size={12} fill={i < Math.round(avgRating) ? '#f59e0b' : 'none'} color="#f59e0b" />)}</span>
               <span className={s.avgRatingCount}>({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span>
             </div>
           )}
@@ -319,32 +338,32 @@ export default function ListingDetail() {
           <div className={s.ctaSection}>
             {isOwner ? (
               <div className={s.bannerOwner}>
-                <span className={s.bannerIcon}>✏️</span>
+                <Pencil size={16} className={s.bannerIcon} />
                 <div>
                   <span className={s.bannerTitle}>This is your listing</span>
-                  <Link to="/dashboard" className={s.bannerLink}>Manage in Dashboard →</Link>
+                  <Link to="/dashboard" className={s.bannerLink}>Manage in Dashboard <ArrowRight size={12} /></Link>
                 </div>
               </div>
             ) : orderDone ? (
               <div className={s.bannerSuccess}>
-                <span className={s.bannerIcon}>✓</span>
+                <Check size={20} className={s.bannerIcon} />
                 <div>
                   <span className={s.bannerTitle}>Order placed!</span>
-                  <Link to="/dashboard" className={s.bannerLink}>Track in Dashboard →</Link>
+                  <Link to="/dashboard" className={s.bannerLink}>Track in Dashboard <ArrowRight size={12} /></Link>
                 </div>
               </div>
             ) : (
               <>
                 {orderError && <p className={s.orderError}>{orderError}</p>}
                 <button onClick={handleAddToCart} disabled={inCart} className={s.buyBtn}>
-                  {inCart ? '✓ Added to Cart' : 'Add to Cart'}
+                  {inCart ? <><Check size={14} /> Added to Cart</> : 'Add to Cart'}
                 </button>
                 <button onClick={handlePlaceOrder} disabled={ordering} className={s.secondaryBtn}>
                   {ordering ? 'Placing order…' : 'Buy Directly'}
                 </button>
                 {currentUser && (
                   <button onClick={handleStartChat} className={s.msgSellerBtn}>
-                    💬 Message Seller
+                    <MessageSquare size={14} /> Message Seller
                   </button>
                 )}
                 {!currentUser && <p className={s.loginHint}>Sign in to purchase or message the seller.</p>}
@@ -357,7 +376,7 @@ export default function ListingDetail() {
                 disabled={wishLoading}
                 className={`${s.wishlistBtn} ${wishlisted ? s.wishlistBtnActive : ''}`}
               >
-                {wishlisted ? '♥ Saved to Wishlist' : '♡ Save to Wishlist'}
+                {wishlisted ? <><Heart size={14} fill="currentColor" /> Saved to Wishlist</> : <><Heart size={14} /> Save to Wishlist</>}
               </button>
             )}
           </div>
@@ -396,7 +415,7 @@ export default function ListingDetail() {
                 </button>
               </form>
             ) : currentUser && alreadyReviewed ? (
-              <div className={s.alreadyReviewed}>✓ You've already reviewed this listing.</div>
+              <div className={s.alreadyReviewed}><Check size={14} /> You've already reviewed this listing.</div>
             ) : !currentUser ? (
               <div className={s.signInPrompt}>
                 <Link to="/login" className={s.signInPromptLink}>Sign in</Link> to leave a review.
@@ -411,10 +430,10 @@ export default function ListingDetail() {
                 {reviews.map((r) => (
                   <div key={r.id} className={s.reviewCard}>
                     <div className={s.reviewHeader}>
-                      <span className={s.reviewAuthor}>{r.authorEmail?.split('@')[0]}</span>
+                      <span className={s.reviewAuthor}>{reviewAuthors[r.authorId] || r.authorEmail?.split('@')[0]}</span>
                       <span className={s.reviewDate}>{fmtDate(r.createdAt)}</span>
                     </div>
-                    <div className={s.reviewStars}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
+                    <div className={s.reviewStars}>{Array.from({length: 5}, (_, i) => <Star key={i} size={12} fill={i < r.rating ? '#f59e0b' : 'none'} color="#f59e0b" />)}</div>
                     <p className={s.reviewBody}>{r.body}</p>
                     {(currentUser?.uid === r.authorId) && (
                       <button onClick={() => handleDeleteReview(r.id)} className={s.deleteBtn}>Delete</button>
@@ -456,7 +475,7 @@ export default function ListingDetail() {
                 {comments.map((c) => (
                   <div key={c.id} className={s.reviewCard}>
                     <div className={s.reviewHeader}>
-                      <span className={s.reviewAuthor}>{c.authorEmail?.split('@')[0]}</span>
+                      <span className={s.reviewAuthor}>{commentAuthors[c.authorId] || c.authorEmail?.split('@')[0]}</span>
                       <span className={s.reviewDate}>{fmtDate(c.createdAt)}</span>
                     </div>
                     <p className={s.reviewBody}>{c.body}</p>

@@ -89,7 +89,11 @@ export const getUserProfile = async (uid) => {
 
 export const getAllUsers = async () => {
   const snap = await getDocs(collection(db, 'users'))
-  return snap.docs.map((d) => d.data())
+  return snap.docs.map((d) => {
+    const data = d.data()
+    const { email, ...rest } = data
+    return rest
+  })
 }
 
 export const setSellerVerified = (uid, verified) =>
@@ -333,6 +337,8 @@ const _createNotification = (uid, data) =>
     createdAt: serverTimestamp(),
   })
 
+export const createNotification = _createNotification
+
 export const getNotifications = async (uid) => {
   const q    = query(
     collection(db, 'notifications'),
@@ -344,7 +350,7 @@ export const getNotifications = async (uid) => {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 }
 
-export const subscribeToNotifications = (uid, onData) => {
+export const subscribeToNotifications = (uid, onData, onError) => {
   const q = query(
     collection(db, 'notifications'),
     where('uid', '==', uid),
@@ -353,7 +359,10 @@ export const subscribeToNotifications = (uid, onData) => {
   )
   return onSnapshot(q, (snap) => {
     onData(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
-  }, () => onData([]))
+  }, (err) => {
+    if (onError) onError(err)
+    else onData([])
+  })
 }
 
 export const markNotificationRead = (id) =>
@@ -438,6 +447,20 @@ const _refreshListingRating = async (listingId) => {
 export const createReview = async (data) => {
   const ref = await addDoc(collection(db, 'reviews'), { ...data, createdAt: serverTimestamp() })
   _refreshListingRating(data.listingId).catch(console.error)
+  try {
+    const listingSnap = await getDoc(doc(db, 'listings', data.listingId))
+    if (listingSnap.exists()) {
+      const listing = listingSnap.data()
+      if (listing.sellerId && listing.sellerId !== data.authorId) {
+        await _createNotification(listing.sellerId, {
+          type: 'new_review',
+          title: 'New review received',
+          body: `Someone left a ${data.rating}-star review on your listing "${listing.title || 'item'}"`,
+          read: false,
+        })
+      }
+    }
+  } catch (_) {}
   return ref
 }
 
@@ -460,8 +483,24 @@ export const deleteReview = async (id) => {
 // COMMENTS
 // ════════════════════════════════════════════════════════
 
-export const createComment = (data) =>
-  addDoc(collection(db, 'comments'), { ...data, createdAt: serverTimestamp() })
+export const createComment = async (data) => {
+  const ref = await addDoc(collection(db, 'comments'), { ...data, createdAt: serverTimestamp() })
+  try {
+    const listingSnap = await getDoc(doc(db, 'listings', data.listingId))
+    if (listingSnap.exists()) {
+      const listing = listingSnap.data()
+      if (listing.sellerId && listing.sellerId !== data.authorId) {
+        await _createNotification(listing.sellerId, {
+          type: 'new_comment',
+          title: 'New question on your listing',
+          body: `Someone asked: "${(data.body || '').slice(0, 80)}${(data.body || '').length > 80 ? '…' : ''}"`,
+          read: false,
+        })
+      }
+    }
+  } catch (_) {}
+  return ref
+}
 
 export const getCommentsByListing = async (listingId) => {
   const q    = query(collection(db, 'comments'), where('listingId', '==', listingId))
@@ -620,7 +659,7 @@ export const subscribeToUserChats = (uid, onChats, onError) => {
   }, (err) => { if (onError) onError(err); else console.error(err) })
 }
 
-export const subscribeToUnreadChats = (uid, onCount) => {
+export const subscribeToUnreadChats = (uid, onCount, onError) => {
   const q = query(
     collection(db, 'chats'),
     where('participants', 'array-contains', uid),
@@ -635,7 +674,10 @@ export const subscribeToUnreadChats = (uid, onCount) => {
       return data.lastMessage && data.lastSenderId !== uid
     }).length
     onCount(count)
-  }, () => onCount(0))
+  }, (err) => {
+    if (onError) onError(err)
+    else onCount(0)
+  })
 }
 
 export const deleteChat = async (chatId) => {

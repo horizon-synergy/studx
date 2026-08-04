@@ -29,20 +29,24 @@ export default function Messages() {
   const { currentUser, loading: authLoading } = useAuth()
   const navigate = useNavigate()
 
-  const [chats,   setChats]   = useState([])
-  const [loading, setLoading] = useState(true)
-  const [names,   setNames]   = useState({})
-  const unsubRef  = useRef(null)
-  const retryRef  = useRef(null)
+  const [chats,    setChats]    = useState([])
+  const [loading,  setLoading]  = useState(true)
+  const [names,    setNames]    = useState({})
+  const [error,    setError]    = useState('')
+  const [retryKey, setRetryKey] = useState(0)
+  const unsubRef   = useRef(null)
+  const retryRef   = useRef(null)
 
   useEffect(() => {
     if (authLoading || !currentUser) { if (!authLoading) setLoading(false); return }
 
     const start = () => {
       if (unsubRef.current) unsubRef.current()
+      setLoading(true)
       unsubRef.current = subscribeToUserChats(
         currentUser.uid,
         (incoming) => {
+          setError('')
           setChats(incoming)
           setLoading(false)
           // Fetch display names for other participants
@@ -52,8 +56,8 @@ export default function Messages() {
           otherUids.forEach(async (uid) => {
             if (names[uid]) return
             try {
-              const [auth, ext] = await Promise.all([getUserProfile(uid), getProfile(uid)])
-              const name = ext?.displayName || auth?.email?.split('@')[0] || 'User'
+              const [_, ext] = await Promise.all([getUserProfile(uid), getProfile(uid)])
+              const name = ext?.displayName || 'User'
               setNames((p) => ({ ...p, [uid]: name }))
             } catch (_) {}
           })
@@ -62,6 +66,7 @@ export default function Messages() {
           if (err?.code === 'permission-denied') {
             retryRef.current = setTimeout(start, 1500)
           } else {
+            setError(err?.message || 'Something went wrong loading your conversations.')
             setLoading(false)
           }
         }
@@ -73,7 +78,7 @@ export default function Messages() {
       clearTimeout(retryRef.current)
       if (unsubRef.current) unsubRef.current()
     }
-  }, [currentUser?.uid, authLoading])
+  }, [currentUser?.uid, authLoading, retryKey])
 
   const getOtherUid = (chat) => chat.participants.find((u) => u !== currentUser?.uid)
 
@@ -86,6 +91,25 @@ export default function Messages() {
   return (
     <main className={s.inboxPage}>
       <h1 className={s.pageTitle}>Messages</h1>
+
+      {error && (
+        <div className={s.inboxError} role="alert">
+          <p className={s.inboxErrorTitle}>Couldn't load your messages</p>
+          <p className={s.inboxErrorMsg}>{error}</p>
+          <div className={s.inboxErrorActions}>
+            <button className={s.retryBtn} onClick={() => setRetryKey((k) => k + 1)}>
+              Retry
+            </button>
+            <a
+              className={s.indexLink}
+              href="https://console.firebase.google.com/project/stud-x/firestore/indexes"
+              target="_blank" rel="noreferrer"
+            >
+              Fix indexes in Firebase
+            </a>
+          </div>
+        </div>
+      )}
 
       {chats.length === 0 ? (
         <div className={s.emptyInbox}>
