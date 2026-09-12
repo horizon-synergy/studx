@@ -1,0 +1,156 @@
+.page {
+  max-width: 44rem;
+  margin: 0 auto;
+  height: calc(100vh - 3.5rem);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  animation: fadeInFast 0.25s var(--ease) both;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--neu-bg);
+  box-shadow: 0 3px 8px -4px var(--neu-dark);
+  flex-shrink: 0;
+}
+.back {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.25rem;
+}
+.back:hover { color: var(--brand-blue); }
+.headerInfo { flex: 1; min-width: 0; }
+.headerTitle {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.headerMeta { font-size: 0.7rem; color: var(--text-muted); }
+.deleteBtn {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--danger-text);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  background: var(--bg-page);
+}
+.bubble {
+  max-width: 78%;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--neu-radius);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.mine {
+  align-self: flex-end;
+  background: var(--brand-blue);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.theirs {
+  align-self: flex-start;
+  background: var(--neu-bg);
+  color: var(--text-primary);
+  border-bottom-left-radius: 4px;
+  box-shadow:
+    var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+}
+.time {
+  display: block;
+  font-size: 0.62rem;
+  opacity: 0.7;
+  margin-top: 0.3rem;
+}
+.composer {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--neu-bg);
+  box-shadow: 0 -3px 8px -4px var(--neu-dark);
+  flex-shrink: 0;
+}
+.input {
+  flex: 1;
+  padding: 0.7rem 0.9rem;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  box-shadow:
+    inset var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    inset calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+}
+.input:focus { box-shadow: 0 0 0 2px var(--brand-blue); }
+/* Send is the actual "contact" action in this flow — brutalist. */
+.send {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 2px solid var(--brut-border-color);
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 0 var(--brut-border-color);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+}
+.send:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--brut-border-color); }
+.send:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+.send:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 2rem 1rem;
+  margin: auto;
+}
+.loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spinner {
+  width: 1.5rem; height: 1.5rem;
+  border: 2px solid var(--brand-blue);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.error {
+  margin: 1rem 1.25rem;
+  padding: 0.75rem 1rem;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+}

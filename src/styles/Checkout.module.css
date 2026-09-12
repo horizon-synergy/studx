@@ -1,0 +1,161 @@
+.page {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+  animation: fadeIn 0.35s var(--ease) both;
+}
+.title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.3rem;
+}
+.sub { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem; }
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 800px) {
+  .layout { grid-template-columns: 1.3fr 0.9fr; align-items: start; }
+}
+.panel {
+  background: var(--neu-bg);
+  border-radius: var(--neu-radius);
+  padding: 1.15rem;
+  box-shadow:
+    var(--neu-dist) var(--neu-dist) var(--neu-blur) var(--neu-dark),
+    calc(var(--neu-dist) * -1) calc(var(--neu-dist) * -1) var(--neu-blur) var(--neu-light);
+}
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.item {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.item:last-child { border-bottom: none; }
+.thumb {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background: var(--bg-subtle);
+}
+.name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+.meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+.price { font-family: var(--font-display); font-weight: 700; color: var(--brand-blue); font-size: 0.9rem; }
+.remove {
+  margin-top: 0.35rem;
+  background: none;
+  border: none;
+  color: var(--danger-text);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0;
+}
+.row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+.input {
+  flex: 1;
+  padding: 0.65rem 0.85rem;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--neu-radius-sm);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  box-shadow:
+    inset var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    inset calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+}
+.btn {
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--brut-radius-sm);
+  border: var(--brut-border) solid var(--brut-border-color);
+  background: var(--brut-surface);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--brut-border-color);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+}
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--brut-border-color); }
+/* Primary CTA — the actual "Buy" action gets the boldest treatment in the
+   flow: biggest shadow, full-width, unmissable. */
+.btnPrimary {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.9rem;
+  background: var(--brand-blue);
+  border: var(--brut-border) solid var(--brut-border-color);
+  color: #fff;
+  border-radius: var(--brut-radius);
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 5px 5px 0 var(--brut-border-color);
+}
+.btnPrimary:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--brut-border-color); }
+.btnPrimary:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: none; }
+.btnPrimary:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+.totals { display: flex; flex-direction: column; gap: 0.45rem; }
+.line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.total {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: 0.25rem;
+}
+.savings { color: var(--success-text); }
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  background: var(--brut-surface-alt);
+  border: var(--brut-border) dashed var(--brut-border-color);
+  border-radius: var(--brut-radius);
+}
+.empty a { color: var(--brand-blue); font-weight: 700; }
+.error {
+  padding: 0.7rem 0.9rem;
+  background: var(--danger-bg);
+  border: var(--brut-border) solid var(--danger-text);
+  color: var(--danger-text);
+  border-radius: var(--brut-radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.success {
+  padding: 0.7rem 0.9rem;
+  background: var(--success-bg);
+  border: var(--brut-border) solid var(--success-text);
+  color: var(--success-text);
+  border-radius: var(--brut-radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 3px 3px 0 var(--success-text);
+  margin-bottom: 0.75rem;
+}
+.hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem; line-height: 1.5; }

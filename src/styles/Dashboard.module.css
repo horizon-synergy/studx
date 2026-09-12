@@ -1,0 +1,283 @@
+.page {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+  animation: fadeIn 0.35s var(--ease) both;
+}
+.header {
+  margin-bottom: 1.5rem;
+}
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.sub {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.tab {
+  flex-shrink: 0;
+  padding: 0.65rem 0.9rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.825rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+.tab:hover {
+  color: var(--text-primary);
+}
+.tabActive {
+  color: var(--brand-blue);
+  font-weight: 600;
+  border-bottom-color: var(--brand-blue);
+}
+
+/* StudX Pro / verification banners — high-emphasis promotional moments,
+   brutalist per the design system's role list. */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.9rem 1rem;
+  background: var(--brut-surface);
+  border: var(--brut-border) solid var(--brut-border-color);
+  border-radius: var(--brut-radius);
+  box-shadow: 4px 4px 0 var(--brut-border-color);
+  margin-bottom: 0.75rem;
+}
+.bannerActive {
+  background: var(--success-bg);
+  border-color: var(--success-text);
+  box-shadow: 4px 4px 0 var(--success-text);
+}
+.bannerTitle {
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+.bannerNote {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+.bannerWarn {
+  background: var(--warn-bg);
+  border-color: var(--warn-text);
+  box-shadow: 4px 4px 0 var(--warn-text);
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: var(--warn-text);
+}
+
+/* Listing rows — base browsing UI, soft neumorphic surface. */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.card {
+  display: grid;
+  grid-template-columns: 4rem 1fr auto;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  background: var(--neu-bg);
+  border-radius: var(--neu-radius-sm);
+  box-shadow:
+    var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+}
+@media (max-width: 560px) {
+  .card {
+    grid-template-columns: 3.5rem 1fr;
+  }
+  .cardActions {
+    grid-column: 1 / -1;
+  }
+}
+.thumb {
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background: var(--bg-subtle);
+}
+.thumbPh {
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+}
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.cardTitle:hover {
+  color: var(--brand-blue);
+}
+.cardMeta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.cardActions {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: var(--brut-radius-sm);
+  border: 2px solid var(--brut-border-color);
+  background: var(--brut-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 2px 2px 0 var(--brut-border-color);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+}
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--brut-border-color); }
+.btnPrimary {
+  background: var(--brand-blue);
+  border-color: var(--brut-border-color);
+  color: #fff;
+}
+.btnDanger {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border-color: var(--danger-text);
+}
+.btnSuccess {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border-color: var(--success-text);
+}
+
+.select {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.72rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.status {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  margin-left: 0.35rem;
+}
+.statusPending {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.statusApproved {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+.statusRejected {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-xl);
+  font-size: 0.875rem;
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+.spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--brand-blue);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.orderCard {
+  padding: 1rem 1.1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.orderTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.orderTitle {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.orderMeta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+.price {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--brand-blue);
+}
+.orderActions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}

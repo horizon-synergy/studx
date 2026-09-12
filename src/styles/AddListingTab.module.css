@@ -1,0 +1,188 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 40rem;
+}
+/* Form sections: soft neumorphic surface, this is the "fill something in"
+   base UI, not an action. */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: var(--neu-bg);
+  border-radius: var(--neu-radius);
+  box-shadow:
+    var(--neu-dist) var(--neu-dist) var(--neu-blur) var(--neu-dark),
+    calc(var(--neu-dist) * -1) calc(var(--neu-dist) * -1) var(--neu-blur) var(--neu-light);
+}
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.input, .select, .textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--neu-radius-sm);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  box-shadow:
+    inset var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    inset calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+  transition: box-shadow var(--transition);
+}
+.input:focus, .select:focus, .textarea:focus { box-shadow: 0 0 0 2px var(--brand-blue); }
+.textarea { min-height: 6rem; resize: vertical; }
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 560px) {
+  .row2 { grid-template-columns: 1fr 1fr; }
+}
+
+/* Product vs. Service type toggle: a meaningful choice that shapes the
+   rest of the form, so it gets the bolder brutalist treatment — same
+   "chip" language as the marketplace category filter. */
+.typeRow { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.typeBtn {
+  flex: 1;
+  min-width: 7rem;
+  padding: 0.75rem 1rem;
+  background: var(--brut-surface);
+  border: 2px solid var(--brut-border-color);
+  border-radius: var(--brut-radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--brut-border-color);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+}
+.typeBtn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--brut-border-color); }
+.typeActive {
+  background: var(--brand-blue);
+  border-color: var(--brut-border-color);
+  color: #fff;
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.preview {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: var(--neu-radius-sm);
+  overflow: hidden;
+  box-shadow:
+    inset var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    inset calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+}
+.preview img { width: 100%; height: 100%; object-fit: cover; }
+.removeImg {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  font-size: 0.65rem;
+  cursor: pointer;
+}
+.uploadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--neu-radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow:
+    var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+}
+.uploadBtn:hover { color: var(--brand-blue); }
+.fileInput { display: none; }
+.progress {
+  height: 0.3rem;
+  background: var(--neu-bg);
+  border-radius: 99px;
+  overflow: hidden;
+  box-shadow:
+    inset 1px 1px 3px var(--neu-dark),
+    inset -1px -1px 3px var(--neu-light);
+}
+.progressBar {
+  height: 100%;
+  background: var(--brand-blue);
+  transition: width 0.2s ease;
+}
+.hint { font-size: 0.72rem; color: var(--text-muted); }
+
+/* State messages: brutalist per the design system (confirmation/error
+   moments are an emphasis case, not base UI). */
+.error {
+  padding: 0.75rem 1rem;
+  background: var(--danger-bg);
+  border: var(--brut-border) solid var(--danger-text);
+  color: var(--danger-text);
+  border-radius: var(--brut-radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.success {
+  padding: 0.75rem 1rem;
+  background: var(--success-bg);
+  border: var(--brut-border) solid var(--success-text);
+  color: var(--success-text);
+  border-radius: var(--brut-radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 3px 3px 0 var(--success-text);
+}
+
+/* The submit button — the "Create Listing" action itself. Boldest thing
+   on the page by design. */
+.submit {
+  align-self: flex-start;
+  padding: 0.8rem 1.75rem;
+  background: var(--brand-blue);
+  color: #fff;
+  border: var(--brut-border) solid var(--brut-border-color);
+  border-radius: var(--brut-radius);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--brut-border-color);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+}
+.submit:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--brut-border-color); }
+.submit:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none; }
+.submit:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }

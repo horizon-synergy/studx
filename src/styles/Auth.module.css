@@ -1,0 +1,125 @@
+.page {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+  animation: fadeIn 0.35s var(--ease) both;
+}
+.card {
+  background: var(--neu-bg);
+  border-radius: var(--neu-radius);
+  padding: 2rem 1.5rem 1.75rem;
+  box-shadow:
+    var(--neu-dist) var(--neu-dist) var(--neu-blur) var(--neu-dark),
+    calc(var(--neu-dist) * -1) calc(var(--neu-dist) * -1) var(--neu-blur) var(--neu-light);
+}
+.brand {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+.logo {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 auto 0.85rem;
+  background: var(--brand-blue);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: #fff;
+}
+.title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.3rem;
+}
+.sub { font-size: 0.85rem; color: var(--text-muted); }
+.form { display: flex; flex-direction: column; gap: 0.85rem; }
+.field { display: flex; flex-direction: column; gap: 0.3rem; }
+.label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
+.input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--neu-radius-sm);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  box-shadow:
+    inset var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    inset calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+}
+.input:focus { box-shadow: 0 0 0 2px var(--brand-blue); }
+/* The one CTA on this page — gets the full brutalist treatment so it's
+   unmistakably the thing to click. */
+.submit {
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--brand-blue);
+  color: #fff;
+  border: var(--brut-border) solid var(--brut-border-color);
+  border-radius: var(--brut-radius);
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--brut-border-color);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+}
+.submit:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--brut-border-color); }
+.submit:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none; }
+.submit:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.15rem 0;
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+.google {
+  width: 100%;
+  padding: 0.7rem;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--neu-radius-sm);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow:
+    var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
+  transition: box-shadow var(--transition);
+}
+.google:hover { box-shadow: inset var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark), inset calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light); }
+.footer {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: 0.825rem;
+  color: var(--text-muted);
+}
+.footer a { color: var(--brand-blue); font-weight: 600; }
+.error {
+  padding: 0.65rem 0.85rem;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+}

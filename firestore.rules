@@ -1,0 +1,212 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    function isVendor() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'vendor';
+    }
+    function isViewer() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'viewer';
+    }
+    function canWrite() {
+      return isSignedIn() && !isViewer();
+    }
+
+    match /users/{uid} {
+      allow read: if true;
+      allow create: if isSignedIn() && isOwner(uid);
+      allow update: if isSignedIn() && (isOwner(uid) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /profiles/{uid} {
+      allow read: if true;
+      allow write: if canWrite() && isOwner(uid);
+      allow delete: if isAdmin();
+    }
+
+    match /listings/{listingId} {
+      allow read: if true;
+      allow create: if canWrite();
+      allow update: if canWrite() &&
+        (resource.data.sellerId == request.auth.uid || isAdmin());
+      allow delete: if canWrite() &&
+        (resource.data.sellerId == request.auth.uid || isAdmin());
+    }
+
+    match /orders/{orderId} {
+      allow list: if isSignedIn();
+      allow get: if isSignedIn() && (
+        resource.data.buyerId == request.auth.uid ||
+        resource.data.sellerId == request.auth.uid ||
+        isAdmin()
+      );
+      allow create: if canWrite() &&
+        request.resource.data.buyerId == request.auth.uid;
+      allow update: if canWrite() && (
+        resource.data.sellerId == request.auth.uid ||
+        resource.data.buyerId == request.auth.uid ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // StudX Eats — vendor restaurant profiles
+    match /vendors/{vendorId} {
+      allow read: if true;
+      allow create: if canWrite() && (isOwner(vendorId) || isAdmin());
+      allow update: if canWrite() && (isOwner(vendorId) || isVendor() && resource.data.ownerId == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // StudX Eats — menu items
+    match /foodItems/{itemId} {
+      allow read: if true;
+      allow create: if canWrite() && (
+        isAdmin() ||
+        (isVendor() && request.resource.data.vendorId == request.auth.uid) ||
+        request.resource.data.vendorId == request.auth.uid
+      );
+      allow update: if canWrite() && (
+        isAdmin() ||
+        resource.data.vendorId == request.auth.uid
+      );
+      allow delete: if canWrite() && (
+        isAdmin() ||
+        resource.data.vendorId == request.auth.uid
+      );
+    }
+
+    // StudX Eats — food orders
+    match /foodOrders/{orderId} {
+      allow read: if isSignedIn() && (
+        resource.data.buyerId == request.auth.uid ||
+        resource.data.vendorId == request.auth.uid ||
+        isAdmin()
+      );
+      allow create: if canWrite() &&
+        request.resource.data.buyerId == request.auth.uid;
+      allow update: if canWrite() && (
+        resource.data.buyerId == request.auth.uid ||
+        resource.data.vendorId == request.auth.uid ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /foodCheckouts/{checkoutId} {
+      allow list: if isAdmin();
+      allow get: if isSignedIn() &&
+        resource.data.buyerId == request.auth.uid;
+      allow create: if canWrite() &&
+        request.resource.data.buyerId == request.auth.uid;
+      allow update: if canWrite() &&
+        resource.data.buyerId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if canWrite() &&
+        (request.resource.data.authorId == request.auth.uid ||
+         request.resource.data.buyerId == request.auth.uid);
+      allow update: if canWrite() &&
+        (resource.data.authorId == request.auth.uid ||
+         resource.data.buyerId == request.auth.uid);
+      allow delete: if canWrite() &&
+        (resource.data.authorId == request.auth.uid ||
+         resource.data.buyerId == request.auth.uid ||
+         isAdmin());
+    }
+
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if canWrite() &&
+        (request.resource.data.authorId == request.auth.uid ||
+         request.resource.data.uid == request.auth.uid);
+      allow update: if canWrite() &&
+        (resource.data.authorId == request.auth.uid ||
+         resource.data.uid == request.auth.uid);
+      allow delete: if canWrite() &&
+        (resource.data.authorId == request.auth.uid ||
+         resource.data.uid == request.auth.uid ||
+         isAdmin());
+    }
+
+    match /wishlists/{uid} {
+      allow read: if isSignedIn() && isOwner(uid);
+      allow write: if canWrite() && isOwner(uid);
+    }
+
+    match /checkouts/{checkoutId} {
+      allow list: if isAdmin();
+      allow get: if isSignedIn() &&
+        resource.data.buyerId == request.auth.uid;
+      allow create: if canWrite() &&
+        request.resource.data.buyerId == request.auth.uid;
+      allow update: if canWrite() &&
+        resource.data.buyerId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    match /coupons/{couponId} {
+      allow read: if isSignedIn();
+      allow create: if canWrite() &&
+        request.resource.data.sellerId == request.auth.uid;
+      allow update: if canWrite() &&
+        (resource.data.sellerId == request.auth.uid || isAdmin());
+      allow delete: if canWrite() &&
+        (resource.data.sellerId == request.auth.uid || isAdmin());
+    }
+
+    match /chats/{chatId} {
+      allow list: if isAdmin();
+      allow get: if isSignedIn();
+      allow create: if canWrite() &&
+        request.auth.uid in request.resource.data.participants;
+      allow update: if canWrite() &&
+        request.auth.uid in resource.data.participants;
+      allow delete: if isAdmin();
+    }
+
+    match /chats/{chatId}/messages/{msgId} {
+      allow read: if isSignedIn() &&
+        request.auth.uid in
+          get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+      allow create: if canWrite() &&
+        request.auth.uid in
+          get(/databases/$(database)/documents/chats/$(chatId)).data.participants &&
+        request.resource.data.senderId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    match /notifications/{id} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    match /ads/{adId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /settings/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

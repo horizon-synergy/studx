@@ -1,0 +1,13 @@
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200
+  forced = false
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy   = "same-origin-allow-popups"
+    Cross-Origin-Embedder-Policy = "unsafe-none"
+[build]
+  command = "npm run build"
+  publish = "dist"
