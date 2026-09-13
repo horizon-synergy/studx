@@ -5,6 +5,29 @@ this is a log, not release notes.
 
 ## Unreleased
 
+- Design: hybrid system rollout **complete**. Final pieces: shared
+  components (StudentBadge, StudentVerificationForm, OnboardingGuide,
+  ViewerBanner — all inline-styled, edited directly since they have no
+  module.css) and Admin internals (Admin.module.css, CouponsTab,
+  PayoutsTab — the latter also covers SellerPayoutSetup by reuse). Every
+  page in the app now uses the hybrid system; see PLAN.md for the full
+  file list and the rules for keeping future UI consistent with it.
+- Fix: Google sign-in reverted to `signInWithPopup` again — the
+  `signInWithRedirect` + `handleGoogleRedirectResult()` wiring was correct
+  this time, but redirect sign-in still wasn't completing in practice
+  (bounces back to the login page). That symptom usually means the test
+  domain isn't in Firebase Console → Auth → Settings → Authorized domains,
+  or `firebaseConfig.authDomain` doesn't match — worth checking if
+  redirect is revisited later. For now, popup is simpler to get working
+  and doesn't depend on either of those being configured correctly.
+  Account-doc creation logic moved back inline in `signInWithGoogle`,
+  `handleGoogleRedirectResult` removed.
+- Design: hybrid system rollout — Eats cluster done. Eats.module.css is
+  shared by Eats (browse), VendorDetail, and VendorDashboard, so one file
+  covered all three (search/menu items/vendor cards = neu, cart button/
+  add-to-order/dietary tags/form submit = brut). EatsCheckout and
+  VendorSignup needed no work — they already reuse Checkout.module.css /
+  Dashboard.module.css from earlier rounds.
 - Design: hybrid system rollout continued — AddListingTab (Create Listing
   form: sections/inputs neu, type-toggle/submit/state messages brut),
   Profile, Messages, ChatRoom (bubbles neu, Send button brut).

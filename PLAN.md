@@ -43,19 +43,23 @@ DOCUMENTATION.md.
 - [x] AddListingTab (sections/inputs = neu, type toggle/submit/state msgs = brut)
 - [x] PaymentSuccess, PaymentCancel — reuse Auth.module.css, already covered
 - [x] Profile, Messages, ChatRoom (bubbles = neu, Send = brut)
+- [x] Eats cluster — Eats.module.css covers Eats/VendorDetail/
+      VendorDashboard (search=neu, cart/add/submit btns=brut, tags=brut
+      chips); EatsCheckout + VendorSignup needed no extra work, they
+      already reuse Checkout.module.css / Dashboard.module.css
+- [x] Shared components — StudentBadge, StudentVerificationForm,
+      OnboardingGuide, ViewerBanner (all inline-styled, no module.css;
+      badges/CTAs went brutalist, form fields/modal card went neumorphic)
+- [x] Admin internals — Admin.module.css, CouponsTab, PayoutsTab (also
+      covers SellerPayoutSetup, which reuses it). Panels/rows/stat cards/
+      inputs = neu; buttons, coupon code chips, success/error/empty
+      states, and the payout "active" banner = brut
 
-**Not started** — still on the pre-redesign flat/bordered style:
-- [ ] Eats, EatsCheckout, VendorDetail, VendorDashboard, VendorSignup
-- [ ] StudentBadge, StudentVerificationForm, OnboardingGuide, ViewerBanner
-- [ ] Admin.module.css internals (tables/forms/panels), CouponsTab,
-      PayoutsTab, AddListingTab (admin-side), SellerPayoutSetup
+## Rollout complete
 
-## Suggested order
-
-1. Eats cluster — largest remaining surface.
-2. StudentBadge/StudentVerificationForm/OnboardingGuide/ViewerBanner —
-   small shared components, quick wins.
-3. Admin internals — lowest priority, shell already reads consistently.
+Every page and shared component in the app now uses the hybrid system.
+Nothing left on the "not started" list. Future new UI should follow the
+rules below rather than needing another dedicated pass.
 
 ## Rules for whoever continues this
 

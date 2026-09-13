@@ -1,11 +1,8 @@
 node_modules/
 dist/
 .env
-.env.example
 .env.local
 .env.yoco.local
-firebase.json
-firebase.rules
 .firebase/
 functions/node_modules/
 functions/lib/

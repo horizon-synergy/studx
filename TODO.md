@@ -40,13 +40,7 @@
 - [ ] Payment flow (Yoco Pro subs)
 - [ ] Payment flow (Paystack marketplace + split)
 
-## Design (Phase 5, in progress — hybrid 70% neumorphism / 30% neobrutalism)
+## Design (Phase 5 — COMPLETE, hybrid 70% neumorphism / 30% neobrutalism)
 - [x] Hybrid token/utility system (`src/index.css`)
-- [x] Admin dashboard shell — sidebar (desktop) + bottom nav (mobile)
-- [x] Marketplace home, listing card, listing detail, checkout, wishlist
-- [x] Navbar, Auth (Login/Register)
-- [x] Promoted listing banner, ad banner, Dashboard
-- [x] AddListingTab, PaymentSuccess/Cancel, Profile, Messages, ChatRoom
-- [ ] Eats cluster, shared components (badges/verification/onboarding)
-- [ ] Admin internals
-- See PLAN.md for the full rollout order and the system's rules.
+- [x] Every page and shared component — see PLAN.md for the full list and
+      the rules for keeping new UI consistent with the system.
