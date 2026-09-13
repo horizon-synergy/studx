@@ -40,11 +40,13 @@
   border-bottom-color: var(--brand-blue);
 }
 .panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
+  background: var(--neu-bg);
+  border-radius: var(--neu-radius);
   padding: 1.15rem;
   margin-bottom: 1rem;
+  box-shadow:
+    var(--neu-dist) var(--neu-dist) var(--neu-blur) var(--neu-dark),
+    calc(var(--neu-dist) * -1) calc(var(--neu-dist) * -1) var(--neu-blur) var(--neu-light);
 }
 .panelTitle {
   font-family: var(--font-display);
@@ -64,9 +66,11 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   padding: 0.85rem 0.95rem;
-  background: var(--bg-subtle);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  background: var(--neu-bg);
+  border-radius: var(--neu-radius-sm);
+  box-shadow:
+    var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
 }
 .info {
   flex: 1;
@@ -89,28 +93,31 @@
   flex-wrap: wrap;
 }
 .btn {
-  padding: 0.4rem 0.7rem;
+  padding: 0.45rem 0.75rem;
   font-size: 0.72rem;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
+  font-weight: 700;
+  border-radius: var(--brut-radius-sm);
+  border: 2px solid var(--brut-border-color);
+  background: var(--brut-surface);
   color: var(--text-secondary);
   cursor: pointer;
+  box-shadow: 2px 2px 0 var(--brut-border-color);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
 }
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--brut-border-color); }
 .btnPrimary {
   background: var(--brand-blue);
-  border-color: var(--brand-blue);
+  border-color: var(--brut-border-color);
   color: #fff;
 }
 .btnSuccess {
   background: var(--success-bg);
-  border-color: var(--success-border);
+  border-color: var(--success-text);
   color: var(--success-text);
 }
 .btnDanger {
   background: var(--danger-bg);
-  border-color: var(--danger-border);
+  border-color: var(--danger-text);
   color: var(--danger-text);
 }
 .form {
@@ -140,12 +147,15 @@
 .select,
 .textarea {
   padding: 0.55rem 0.75rem;
-  background: var(--bg-input);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--neu-radius-sm);
   color: var(--text-primary);
   font-size: 0.825rem;
   outline: none;
+  box-shadow:
+    inset var(--neu-dist-sm) var(--neu-dist-sm) var(--neu-blur-sm) var(--neu-dark),
+    inset calc(var(--neu-dist-sm) * -1) calc(var(--neu-dist-sm) * -1) var(--neu-blur-sm) var(--neu-light);
 }
 .textarea {
   min-height: 4rem;
@@ -156,8 +166,9 @@
   padding: 2rem 1rem;
   color: var(--text-muted);
   font-size: 0.85rem;
-  border: 1px dashed var(--border-color);
-  border-radius: var(--radius-lg);
+  background: var(--brut-surface-alt);
+  border: var(--brut-border) dashed var(--brut-border-color);
+  border-radius: var(--brut-radius);
 }
 .loading {
   display: flex;
@@ -173,19 +184,21 @@
   animation: spin 0.7s linear infinite;
 }
 .msg {
-  padding: 0.65rem 0.85rem;
-  border-radius: var(--radius-md);
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--brut-radius-sm);
   font-size: 0.8rem;
+  font-weight: 600;
   margin-bottom: 0.85rem;
 }
 .msgOk {
   background: var(--success-bg);
-  border: 1px solid var(--success-border);
+  border: var(--brut-border) solid var(--success-text);
   color: var(--success-text);
+  box-shadow: 3px 3px 0 var(--success-text);
 }
 .msgErr {
   background: var(--danger-bg);
-  border: 1px solid var(--danger-border);
+  border: var(--brut-border) solid var(--danger-text);
   color: var(--danger-text);
 }
 .check {
@@ -208,10 +221,12 @@
   }
 }
 .statCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
+  background: var(--neu-bg);
+  border-radius: var(--neu-radius);
   padding: 1.1rem;
+  box-shadow:
+    var(--neu-dist) var(--neu-dist) var(--neu-blur) var(--neu-dark),
+    calc(var(--neu-dist) * -1) calc(var(--neu-dist) * -1) var(--neu-blur) var(--neu-light);
 }
 .statLabel {
   font-size: 0.72rem;
@@ -226,6 +241,7 @@
   font-weight: 800;
   margin: 0.3rem 0;
   letter-spacing: -0.02em;
+  color: var(--brand-blue);
 }
 .statSub {
   font-size: 0.72rem;

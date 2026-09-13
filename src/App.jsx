@@ -23,7 +23,7 @@ const EatsCheckout = lazy(() => import("./pages/EatsCheckout"));
 const VendorDashboard = lazy(() => import("./pages/VendorDashboard"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCancel = lazy(() => import("./pages/PaymentCancel"));
-const VendorSignup = lazy(() => import("./pages/VendorSignup"));
+const VendorSignup = lazy(() => import("./pages/VendorSignUp"));
 
 function PageSpinner() {
   return (

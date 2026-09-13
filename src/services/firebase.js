@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
-  onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, getRedirectResult,
+  onAuthStateChanged, GoogleAuthProvider, signInWithPopup,
 } from 'firebase/auth'
 import { getFirestore, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, serverTimestamp, increment, onSnapshot, limit, Timestamp, writeBatch } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
@@ -175,44 +175,31 @@ export const subscribeToAuthChanges = (cb) => onAuthStateChanged(auth, cb)
 export const googleProvider = new GoogleAuthProvider()
 
 /**
- * signInWithRedirect + handleGoogleRedirectResult(), together.
+ * REVERTED 2026-09-11 (again): back to signInWithPopup.
  *
- * FIXED 2026-09-11: this pair was already written correctly, but
- * handleGoogleRedirectResult() was never actually called anywhere in the
- * app — signInWithGoogle() would kick off the redirect to Google fine,
- * but nothing on app load ever resolved the result when the browser came
- * back, so the Firestore user/profile docs never got created and the
- * sign-in never "finished" from the app's point of view. The fix is in
- * AuthContext.jsx, not here: handleGoogleRedirectResult() now runs once
- * in the initial useEffect, before/alongside subscribeToAuthChanges.
+ * signInWithRedirect + handleGoogleRedirectResult() was wired up
+ * correctly this time (verified the missing call was added to
+ * AuthContext), but it's still not completing sign-in in practice —
+ * the user reported it just bounces back to the login page. That
+ * points at something environment-specific (Firebase Console's
+ * "Authorized domains" not including the domain it's being tested on
+ * is the most common cause of a silent redirect-loop-to-login; a
+ * mismatched authDomain in firebaseConfig is the other usual suspect).
+ * Rather than keep debugging redirect in an environment I can't run,
+ * switching back to signInWithPopup — the account creation logic moves
+ * back inline since the browser never navigates away, so the caller
+ * gets the credential directly again.
  *
- * signInWithRedirect avoids the popup+cross-window-storage dance that
- * signInWithPopup depends on, which silently breaks in browsers/extensions
- * that block third-party cookies — see git history on this function for
- * the original writeup.
- *
- * signInWithGoogle() only kicks off the redirect — there's no return
- * value here because the browser navigates away. The actual result is
- * handled by handleGoogleRedirectResult() below.
+ * If redirect gets revisited later: check Firebase Console → Auth →
+ * Settings → Authorized domains includes whatever domain/port this is
+ * tested on (localhost should already be there by default, but a
+ * custom dev domain or a deployed preview URL won't be), and confirm
+ * firebaseConfig.authDomain matches.
  */
-export const signInWithGoogle = () => signInWithRedirect(auth, googleProvider)
+export const signInWithGoogle = async () => {
+  const credential = await signInWithPopup(auth, googleProvider)
+  const { user } = credential
 
-/**
- * Call this ONCE, on app load — see AuthContext.jsx's initial useEffect.
- * After signInWithGoogle() redirects the browser to Google and back, this
- * is what actually completes the sign-in and creates the Firestore user/
- * profile docs for a brand-new account.
- *
- * Returns the UserCredential if a redirect sign-in just completed, or
- * null if the page just loaded normally (no pending redirect result).
- * Safe to call on every page load — it's a no-op when there's nothing to
- * resolve.
- */
-export const handleGoogleRedirectResult = async () => {
-  const result = await getRedirectResult(auth)
-  if (!result) return null
-
-  const { user } = result
   const existing = await getDoc(doc(db, 'users', user.uid))
   if (!existing.exists()) {
     const studentEmail = isStudentEmail(user.email)
@@ -234,7 +221,7 @@ export const handleGoogleRedirectResult = async () => {
     avatarUrl: existingProfile.avatarUrl || user.photoURL || '',
   }, { merge: true })
 
-  return result
+  return credential
 }
 
 export const getUserProfile = async (uid) => { const snap = await getDoc(doc(db, 'users', uid)); return snap.exists() ? snap.data() : null }
